@@ -35,6 +35,10 @@ namespace HRMS.Models
 
         public DbSet<MstDefaultShiftsModel> DefaultShifts { get; set; }
 
+        public DbSet<TblShiftChangeHeadersModel> TblShiftChangeHeaders { get; set; }
+
+        public DbSet<TblShiftChangeDetailsModel> TblShiftChangeDetails { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TblOvertimeHeadersModel>()
@@ -70,6 +74,19 @@ namespace HRMS.Models
                 {
                     c.EmployeeCD,
                     c.ShiftRegisterHeaderId,
+                    c.WorkDate
+                });
+            modelBuilder.Entity<TblShiftChangeHeadersModel>()
+                .HasKey(c => new
+                {
+                    c.Id,
+                    c.TicketId
+                });
+            modelBuilder.Entity<TblShiftChangeDetailsModel>()
+                .HasKey(c => new
+                {
+                    c.EmployeeCD,
+                    c.ShiftChangeHeaderId,
                     c.WorkDate
                 });
 
