@@ -209,6 +209,7 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\DefaultShiftController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
@@ -240,6 +241,8 @@
     <Compile Include="Models\MstTicketTypesModel.cs" />
     <Compile Include="Models\TblOvertimeDetailsModel.cs" />
     <Compile Include="Models\TblOvertimeHeadersModel.cs" />
+    <Compile Include="Models\TblShiftChangeDetailsModel.cs" />
+    <Compile Include="Models\TblShiftChangeHeadersModel.cs" />
     <Compile Include="Models\TblShiftRegisterDetailsModel.cs" />
     <Compile Include="Models\TblShiftRegisterHeadersModel.cs" />
     <Compile Include="Models\TblTicketsModel.cs" />
@@ -255,6 +258,7 @@
     <Compile Include="Services\OvertimeService.cs" />
     <Compile Include="Services\PermissionService.cs" />
     <Compile Include="Services\ServiceResult.cs" />
+    <Compile Include="Services\ShiftChangeService.cs" />
     <Compile Include="Services\ShiftRegisterService.cs" />
     <Compile Include="Services\ShiftResolveService.cs" />
     <Compile Include="Utils\HtmlExtensions.cs" />
@@ -266,6 +270,7 @@
     <Compile Include="ViewModels\AttendanceEmployeeRowViewModel.cs" />
     <Compile Include="ViewModels\AttendanceReportPageViewModel.cs" />
     <Compile Include="ViewModels\ChangePasswordViewModel.cs" />
+    <Compile Include="ViewModels\DefaultShiftPageViewModel.cs" />
     <Compile Include="ViewModels\EffectiveShiftViewModel.cs" />
     <Compile Include="ViewModels\EmployeeListItemViewModel.cs" />
     <Compile Include="ViewModels\EmployeePageViewModel.cs" />
@@ -278,6 +283,11 @@
     <Compile Include="ViewModels\ReportOvertimeYearViewModel.cs" />
     <Compile Include="ViewModels\ResetPasswordRequest.cs" />
     <Compile Include="ViewModels\SaveAccountRoleRequest.cs" />
+    <Compile Include="ViewModels\ShiftChangeDetailItemViewModel.cs" />
+    <Compile Include="ViewModels\ShiftChangeDetailPageViewModel.cs" />
+    <Compile Include="ViewModels\ShiftChangeHeaderDetailViewModel.cs" />
+    <Compile Include="ViewModels\ShiftChangePageViewModel.cs" />
+    <Compile Include="ViewModels\ShiftChangeRequestModel.cs" />
     <Compile Include="ViewModels\ShiftRegisterDetailItemViewModel.cs" />
     <Compile Include="ViewModels\ShiftRegisterDetailPageViewModel.cs" />
     <Compile Include="ViewModels\ShiftRegisterHeaderDetailViewModel.cs" />
@@ -3344,6 +3354,7 @@
     <Content Include="Views\ShiftRegister\Detail.cshtml" />
     <Content Include="Views\ShiftRegister\Edit.cshtml" />
     <Content Include="Views\Shared\NotFound.cshtml" />
+    <Content Include="Views\DefaultShift\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
