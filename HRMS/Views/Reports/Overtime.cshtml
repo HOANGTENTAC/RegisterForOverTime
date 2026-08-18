@@ -1,0 +1,214 @@
+﻿@{
+    ViewBag.Title = "Thống kê tăng ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<HRMS.ViewModels.ReportOvertimeViewModel>
+
+<link href="~/CSS/over-time-report.css" rel="stylesheet" />
+
+@{
+    var employees = Model.Where(r => !r.IsTotalRow).ToList();
+
+    var totalEmployees = employees
+        .Select(r => r.EmployeeCD)
+        .Distinct()
+        .Count();
+
+    var totalSessions = employees.Sum(r => r.Ngay.Count(x => x > 0));
+
+    var totalHours = employees.Sum(r => r.TongSoGioTangCa);
+
+    var dayTotals = Enumerable.Range(0, 31)
+        .Select(d => employees.Sum(r => r.Ngay[d]))
+        .ToList();
+
+    var maxDay = dayTotals.IndexOf(dayTotals.Max()) + 1;
+
+    var totalRow = Model.FirstOrDefault(r => r.IsTotalRow);
+}
+
+<div class="report-page">
+    <!-- HEADER -->
+    <div class="report-header">
+        <div>
+            <h2>Thống kê tăng ca</h2>
+            <p>Theo dõi tình hình đăng ký tăng ca theo nhân viên và phòng ban</p>
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="card report-filter-card">
+        <div class="card-header">
+            <i class="fas fa-filter me-2"></i>
+            Bộ lọc báo cáo
+        </div>
+        <div class="card-body">
+            <form id="reportFilterForm" action="@Url.Action("Overtime","Reports")" method="get">
+                <div class="row g-3 align-items-end">
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label"> Tháng </label>
+                        <input id="reportMonth" type="month" name="month" class="form-control" value="@ViewBag.SelectedMonth" />
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Phòng ban</label>
+                        <select id="reportDept" name="dept" class="form-select">
+                            <option value="">
+                                Tất cả phòng ban
+                            </option>
+                            @foreach (var dept in ViewBag.Departments as List<HRMS.Models.DepartmentModel>)
+                            {
+                                <option value="@dept.MaPhongBan"
+                                        @(ViewBag.SelectedDept == dept.MaPhongBan ? "selected" : "")>
+                                    @dept.TenPhongBan
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label"> Nhân viên</label>
+                        <input id="reportEmployee" type="text" name="employee" class="form-control" placeholder="Mã nhân viên"
+                               value="@ViewBag.SelectedEmployee" />
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label"> Hành động </label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill btn-report-search">
+                                <i class="fas fa-search me-1"></i> Xem báo cáo
+                            </button>
+                            <a id="btnExportOvertime" href="@Url.Action("ExportOvertime", "Reports", new
+                                { month = ViewBag.SelectedMonth,
+                                    dept = ViewBag.SelectedDept,
+                                    employee = ViewBag.SelectedEmployee
+                                })" class="btn btn-success flex-fill">
+                                <i class="fas fa-file-excel me-1"></i> Export
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- KPI -->
+    <div class="row g-4 report-summary">
+        <div class="col-xl-3 col-md-6">
+            <div class="report-kpi kpi-primary">
+                <div class="report-kpi-content">
+                    <span>Tổng nhân viên OT</span>
+                    <h3 id="kpiTotalEmployees">@totalEmployees</h3>
+                </div>
+                <i class="fas fa-users report-kpi-icon"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="report-kpi kpi-success">
+                <div class="report-kpi-content">
+                    <span>Tổng lượt OT</span>
+                    <h3 id="kpiTotalSessions">@totalSessions</h3>
+                </div>
+                <i class="fas fa-list-check report-kpi-icon"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="report-kpi kpi-warning">
+                <div class="report-kpi-content">
+                    <span>Tổng giờ OT</span>
+                    <h3 id="kpiTotalHours">@totalHours</h3>
+                </div>
+                <i class="fas fa-clock report-kpi-icon"></i>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="report-kpi kpi-danger">
+                <div class="report-kpi-content">
+                    <span>Ngày cao điểm</span>
+                    <h3 id="kpiMaxDay">@maxDay</h3>
+                </div>
+                <i class="fas fa-fire report-kpi-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card report-table-card">
+        <div class="card-header">
+            <i class="fas fa-table me-2"></i> Chi tiết tăng ca
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered report-table text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th class="employee-column">Nhân viên</th>
+                            @for (int d = 1; d <= 31; d++)
+                            {
+                                <th>@d</th>
+                            }
+                            <th>Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        @{
+                            string currentDept = "";
+                        }
+                        @foreach (var row in employees)
+                        {
+                            if (currentDept != row.TenPhongBan)
+                            {
+                                currentDept = row.TenPhongBan;
+                               <tr class="dept-row">
+                                   <td class="dept-name-cell">
+                                       <i class="fas fa-folder-open me-2"></i>
+                                       @currentDept
+                                   </td>
+
+                                   <td class="dept-fill-cell" colspan="32"></td>
+                               </tr>
+                            }
+                            <tr>
+                                <td class="employee-cell">
+                                    <strong>@row.EmployeeCD</strong>
+                                    <span>@row.TenNhanVien</span>
+                                </td>
+                                @for (int d = 0; d < 31; d++)
+                                {
+                                    <td>
+                                        @(row.Ngay[d] == 0 ? "" : row.Ngay[d].ToString())
+                                    </td>
+                                }
+                                <td class="fw-bold">
+                                    @row.TongSoGioTangCa
+                                </td>
+                            </tr>
+                        }
+
+                        @if (totalRow != null)
+                        {
+                            <tr class="total-row">
+                                <td>
+                                    @totalRow.TenPhongBan
+                                </td>
+                                @for (int d = 0; d < 31; d++)
+                                {
+                                    <td>
+                                        @(totalRow.Ngay[d] == 0 ? "" : totalRow.Ngay[d].ToString())
+                                    </td>
+                                }
+                                <td>
+                                    @totalRow.TongSoGioTangCa
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.reportOvertimeUrls = {
+        search: '@Url.Action("OvertimeData", "Reports")',
+        export: '@Url.Action("ExportOvertime", "Reports")'
+    };
+</script>
+<script src="~/JS/report-overtime.js"></script>

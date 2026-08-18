@@ -1,0 +1,699 @@
+﻿/* ==================================================
+   GLOBAL
+================================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+.content {
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+/* ==================================================
+   LOADING OVERLAY
+================================================== */
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .loading-overlay.hidden {
+        display: none;
+    }
+
+.spinner-modern {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 4px solid #dbeafe;
+    border-top: 4px solid #2563eb;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================================================
+   HERO
+================================================== */
+
+.hero-section {
+    background: linear-gradient( 135deg, #2563eb, #3b82f6 );
+    color: white;
+    border-radius: 24px;
+    padding: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        right: -80px;
+        top: -80px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
+    }
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.18);
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.hero-section h2 {
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.hero-section p {
+    margin: 0;
+}
+
+.today-label {
+    opacity: .8;
+}
+
+.today-date {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* ========================================
+   HERO STATS
+======================================== */
+
+.hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.hero-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
+    transition: all .25s ease;
+}
+
+    .hero-stat:hover {
+        background: rgba(255,255,255,.18);
+        transform: translateY(-2px);
+    }
+
+    .hero-stat i {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        background: rgba(255,255,255,.18);
+        color: white;
+        font-size: 16px;
+    }
+
+    .hero-stat small {
+        display: block;
+        color: rgba(255,255,255,.75);
+        font-size: 12px;
+        margin-bottom: 2px;
+    }
+
+    .hero-stat strong {
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+/* ==================================================
+   PANEL
+================================================== */
+
+.dashboard-panel {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: .3s ease;
+    box-shadow: 0 10px 35px rgba(15,23,42,.06);
+}
+
+    .dashboard-panel:hover {
+        box-shadow: 0 20px 45px rgba(15,23,42,.08);
+    }
+
+.panel-header {
+    padding: 24px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .panel-header h4 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .panel-header span {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+.panel-body {
+    padding: 24px;
+}
+
+.panel-footer {
+    padding: 18px;
+    border-top: 1px solid #eef2f7;
+}
+
+/* ==================================================
+   FORM
+================================================== */
+
+.form-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    border-radius: 12px;
+    height: 44px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 .2rem rgba(37,99,235,.15);
+    }
+
+/* ==================================================
+   TABLE
+================================================== */
+
+.modern-table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+    .modern-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .modern-table tbody tr {
+        background: white;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: rowFade .4s ease forwards;
+        transition: .25s ease;
+    }
+
+        .modern-table tbody tr:hover {
+            background: #f8fbff;
+            transform: scale(1.004);
+            box-shadow: 0 6px 18px rgba(37,99,235,.08);
+        }
+
+    .modern-table td {
+        vertical-align: middle;
+        padding: 14px 12px;
+        border-top: 1px solid #eef2f7;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+        .modern-table td:first-child {
+            border-left: 1px solid #eef2f7;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .modern-table td:last-child {
+            border-right: 1px solid #eef2f7;
+            border-radius: 0 10px 10px 0;
+        }
+
+@keyframes rowFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================================================
+   BADGE
+================================================== */
+
+.type-badge,
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.modern-table tr:hover .type-badge,
+.modern-table tr:hover .status-badge {
+    transform: translateY(-1px);
+}
+
+/* ==================================================
+   TYPE BADGE - TICKET TYPES
+================================================== */
+
+.ot {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.shift-register,
+.sr {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.shift-change {
+    background: #ccfbf1;
+    color: #0f766e;
+}
+
+.leave {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.business-trip {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.other-request {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* ==================================================
+   STATUS BADGE - NEW WORKFLOW
+================================================== */
+
+/* 10 - PENDING */
+.status-pending,
+.pending-manager,
+.waiting-manager {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* 20 - MANAGER_ACCEPTED */
+.status-manager-accepted,
+.manager-accepted {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* 30 - MANAGER_REJECTED */
+.status-manager-rejected,
+.manager-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* 40 - HR_REJECTED */
+.status-hr-rejected,
+.hr-rejected {
+    background: #ffe4e6;
+    color: #be123c;
+}
+
+/* 90 - FINISHED */
+.status-finished,
+.finished {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* 99 - CANCELLED */
+.status-cancelled,
+.cancelled {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+
+/* ==================================================
+   STATUS BADGE - EXTRA STATES IF NEEDED
+================================================== */
+
+.draft {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.processing {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.waiting-hr {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.expired {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.warning {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+/* ==================================================
+   BUTTON
+================================================== */
+
+.btn {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+.btn-outline-primary:hover {
+    box-shadow: 0 8px 20px rgba(37,99,235,.15);
+}
+
+/* ==================================================
+   PAGINATION
+================================================== */
+
+#requestPagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+    #requestPagination button {
+        min-width: 40px;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: #eef4ff;
+        color: #2563eb;
+        transition: .25s;
+    }
+
+        #requestPagination button:hover {
+            background: #2563eb;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        #requestPagination button.active {
+            background: #2563eb;
+            color: white;
+        }
+
+/* ==================================================
+   TAB / PAGE TRANSITION
+================================================== */
+
+.tab-content-animate {
+    animation: contentFade .35s ease;
+}
+
+@keyframes contentFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================================================
+   CALENDAR
+================================================== */
+
+.calendar-panel {
+    position: sticky;
+    top: 20px;
+}
+
+.calendar-filter {
+    display: flex;
+    gap: 10px;
+}
+
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+    .calendar-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        font-size: 12px;
+    }
+
+.legend {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+    .legend.work {
+        background: #cbd5e1;
+    }
+
+    .legend.off {
+        background: #f9a8d4;
+    }
+
+    .legend.holiday {
+        background: #22c55e;
+    }
+
+    .legend.today {
+        background: #2563eb;
+    }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.week {
+    text-align: center;
+    padding: 8px 0;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: #3b82f6;
+}
+
+    .week.sat {
+        background: #8b5cf6;
+    }
+
+    .week.sun {
+        background: #ef4444;
+    }
+
+.day {
+    height: 42px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #eef2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: .2s;
+}
+
+    .day:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0,0,0,.08);
+    }
+
+    .day.off {
+        background: #fff1f6;
+        color: #db2777;
+    }
+
+    .day.holiday {
+        background: #ecfdf5;
+        color: #15803d;
+    }
+
+    .day.today {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+    .day small {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        font-size: 10px;
+    }
+
+#calendarGrid {
+    transition: opacity .2s ease;
+}
+
+
+@keyframes calendarDayShow {
+
+    from {
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ==================================================
+   SKELETON
+================================================== */
+
+.skeleton-row {
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient( 90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75% );
+    background-size: 200% 100%;
+    animation: shimmer 1.25s infinite;
+}
+
+@keyframes shimmer {
+
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width:1200px) {
+
+    .calendar-panel {
+        position: static;
+    }
+}
+
+@media (max-width:768px) {
+
+    .hero-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .calendar-filter {
+        flex-direction: column;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+@media (max-width:576px) {
+
+    .content {
+        padding: 12px;
+    }
+
+    .hero-section {
+        padding: 20px;
+    }
+
+        .hero-section h2 {
+            font-size: 1.5rem;
+        }
+}

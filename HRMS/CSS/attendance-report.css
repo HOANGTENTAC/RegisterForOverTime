@@ -1,0 +1,779 @@
+﻿/* =========================================================
+   ATTENDANCE REPORT PAGE
+========================================================= */
+
+.attendance-report-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.attendance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .attendance-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .attendance-header p {
+        margin: 6px 0 0;
+        color: #64748b;
+    }
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+.attendance-filter-card {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+}
+
+    .attendance-filter-card .card-header {
+        border: none;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        padding: 18px 24px;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .attendance-filter-card .card-body {
+        padding: 24px;
+        background: #fff;
+    }
+
+    .attendance-filter-card .form-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+    }
+
+    .attendance-filter-card .form-control,
+    .attendance-filter-card .form-select {
+        height: 48px;
+        border-radius: 14px;
+        border: 1px solid #dbe2ea;
+        transition: all .25s ease;
+    }
+
+        .attendance-filter-card .form-control:focus,
+        .attendance-filter-card .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 .25rem rgba(37, 99, 235, .12);
+            transform: translateY(-1px);
+        }
+
+    .attendance-filter-card .btn {
+        height: 48px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all .25s ease;
+    }
+
+        .attendance-filter-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+        }
+
+/* =========================================================
+   KPI
+========================================================= */
+
+.attendance-summary {
+    margin-top: 0;
+}
+
+.attendance-kpi {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    padding: 24px;
+    min-height: 135px;
+    color: #fff;
+    transition: all .3s ease;
+}
+
+    .attendance-kpi:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, .15);
+    }
+
+    .attendance-kpi::before {
+        content: "";
+        position: absolute;
+        right: -30px;
+        bottom: -30px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .12);
+    }
+
+    .attendance-kpi::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient( 120deg, transparent, rgba(255, 255, 255, .20), transparent );
+        transition: .8s;
+    }
+
+    .attendance-kpi:hover::after {
+        left: 120%;
+    }
+
+    .attendance-kpi span {
+        position: relative;
+        z-index: 2;
+        display: block;
+        font-size: 13px;
+        opacity: .9;
+        margin-bottom: 10px;
+        letter-spacing: .3px;
+    }
+
+    .attendance-kpi h3 {
+        position: relative;
+        z-index: 2;
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .attendance-kpi i {
+        position: absolute;
+        right: 18px;
+        bottom: 14px;
+        font-size: 54px;
+        color: rgba(255, 255, 255, .20);
+        z-index: 1;
+    }
+
+.kpi-primary {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.kpi-success {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.kpi-warning {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.kpi-danger {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.attendance-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .04);
+}
+
+    .attendance-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .attendance-legend b {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+
+.attendance-table-card {
+    position: relative;
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+}
+
+    .attendance-table-card .card-header {
+        background: #fff;
+        border-bottom: 1px solid #eef2f7;
+        padding: 18px 24px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .attendance-table-card .card-body {
+        padding: 0;
+    }
+
+/* =========================================================
+   TABLE
+========================================================= */
+.attendance-table {
+    margin-bottom: 0;
+    font-size: 12.5px;
+    /*
+       Quan trọng khi dùng sticky:
+       không collapse border vì dễ gây mất line
+       khi scroll ngang.
+    */
+    border-collapse: separate;
+    border-spacing: 0;
+    /*
+       Cho phép table rộng hơn container để scroll ngang.
+    */
+    width: max-content;
+    min-width: 100%;
+}
+
+    .attendance-table th,
+    .attendance-table td {
+        padding: 8px 9px;
+        /*
+       Tách border thay vì collapse
+       để sticky cell giữ được line.
+    */
+        border-top: 0 !important;
+        border-left: 0 !important;
+        border-right: 1px solid #e5e7eb !important;
+        border-bottom: 1px solid #e5e7eb !important;
+        background-clip: padding-box;
+    }
+
+
+    /* =========================================================
+   TABLE HEADER
+========================================================= */
+
+    /* =========================================================
+   LINE GIỮA CÁC NGÀY - HEADER
+========================================================= */
+
+    .attendance-table thead th {
+        position: sticky;
+        top: var(--app-navbar-height);
+        z-index: 20;
+        background: #0f172a;
+        color: #fff;
+        /*
+       Line giữa ngày 1 | 2 | 3 | 4...
+    */
+        border-right: 1px solid #f8fafc !important;
+        border-bottom: 1px solid #f8fafc !important;
+        white-space: nowrap;
+        font-weight: 600;
+        text-align: center;
+        background-clip: padding-box;
+    }
+
+
+    /* =========================================================
+   LINE GIỮA CÁC NGÀY - BODY
+========================================================= */
+
+    .attendance-table th,
+    .attendance-table td {
+        padding: 8px 9px;
+        border-top: 0 !important;
+        border-left: 0 !important;
+        /*
+       Line dọc giữa từng ngày
+    */
+        border-right: 1px solid #dbe2ea !important;
+        /*
+       Line ngang giữa từng nhân viên
+    */
+        border-bottom: 1px solid #e2e8f0 !important;
+        background-clip: padding-box;
+    }
+
+
+    /* =========================================================
+   TABLE BODY
+========================================================= */
+
+    .attendance-table tbody td {
+        vertical-align: middle;
+        color: #111827;
+        background-color: #fff;
+    }
+
+    .attendance-table tbody tr:hover td {
+        background-color: #f8fafc;
+    }
+
+
+/* =========================================================
+   EMPLOYEE COLUMN
+========================================================= */
+
+.employee-column,
+.employee-cell {
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+}
+
+
+/* =========================================================
+   EMPLOYEE CONTENT
+========================================================= */
+
+.employee-cell {
+    text-align: left;
+    padding-left: 14px !important;
+}
+
+    .employee-cell strong,
+    .employee-cell span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .employee-cell strong {
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .employee-cell span {
+        color: #64748b;
+        font-size: 12.5px;
+        line-height: 1.25;
+        margin-top: 3px;
+    }
+
+
+/* =========================================================
+   STICKY EMPLOYEE HEADER
+========================================================= */
+
+.attendance-table thead th.employee-column {
+    position: sticky;
+    left: 0;
+    top: var(--app-navbar-height);
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+    z-index: 30;
+    background: #0f172a !important;
+    /* Line nhẹ */
+    border-right: 1px solid rgba(96, 165, 250, .45) !important;
+    /* Bóng rất nhẹ khi scroll ngang */
+    box-shadow: 2px 0 5px rgba(15, 23, 42, .04);
+}
+
+
+/* =========================================================
+   STICKY EMPLOYEE BODY
+========================================================= */
+
+.attendance-table tbody td.employee-cell {
+    position: sticky;
+    left: 0;
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+    z-index: 10;
+    background: #fff !important;
+    /* Line nhẹ */
+    border-right: 1px solid rgba(148, 163, 184, .35) !important;
+    /* Shadow rất nhẹ */
+    box-shadow: 2px 0 5px rgba(15, 23, 42, .025);
+    background-clip: padding-box;
+}
+
+/* Hover vẫn giữ sticky column */
+
+.attendance-table tbody tr:hover td.employee-cell {
+    background: #f8fafc !important;
+}
+
+
+/* =========================================================
+   DAY CELLS
+========================================================= */
+
+.attendance-table thead th:nth-child(n+2):nth-child(-n+32),
+.attendance-table tbody tr:not(.dept-row) td:nth-child(n+2):nth-child(-n+32) {
+    min-width: 42px;
+    width: 42px;
+    text-align: center;
+}
+
+
+/* =========================================================
+   ATTENDANCE CELL
+========================================================= */
+
+.attendance-cell {
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: default;
+}
+
+
+/* =========================================================
+   OK
+========================================================= */
+
+.status-OK,
+.cell-ok {
+    background: #dcfce7;
+    color: #166534;
+}
+
+
+/* =========================================================
+   LATE
+========================================================= */
+
+.status-LATE_IN,
+.cell-late {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+
+/* =========================================================
+   EARLY
+========================================================= */
+
+.status-EARLY_OUT,
+.cell-early {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+
+/* =========================================================
+   MISSING
+========================================================= */
+
+.status-MISSING_IN,
+.status-MISSING_OUT,
+.status-NO_DATA,
+.cell-missing,
+.cell-empty {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   OFF
+========================================================= */
+
+.status-OFF,
+.cell-off {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+
+/* =========================================================
+   HOLIDAY
+========================================================= */
+
+.status-HOLIDAY,
+.cell-holiday {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+
+/* =========================================================
+   WORK ON OFF DAY
+========================================================= */
+
+.status-WORK_OFF,
+.cell-workoff {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   FUTURE / EMPTY
+========================================================= */
+
+.status-FUTURE,
+.status-EMPTY {
+    background: transparent;
+    color: #cbd5e1;
+}
+
+
+/* =========================================================
+   DEPARTMENT ROW
+========================================================= */
+
+.attendance-table .dept-row td {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+    border-right: 1px solid #dbeafe !important;
+    border-bottom: 1px solid #dbeafe !important;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DEPARTMENT NAME - STICKY
+========================================================= */
+
+.attendance-table .dept-row .dept-name-cell {
+    position: sticky;
+    left: 0;
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+    z-index: 15;
+    text-align: left;
+    padding: 10px 20px !important;
+    background: #eff6ff !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid rgba(96, 165, 250, .25) !important;
+    box-shadow: 2px 0 5px rgba(37, 99, 235, .02);
+}
+
+
+/* =========================================================
+   DEPARTMENT FILL
+========================================================= */
+
+.attendance-table .dept-row .dept-fill-cell {
+    padding: 10px 0 !important;
+    background: #eff6ff !important;
+    border-right: 1px solid #dbeafe !important;
+}
+
+
+/* =========================================================
+   SUMMARY COLUMNS
+========================================================= */
+
+.attendance-table th:nth-last-child(1),
+.attendance-table th:nth-last-child(2),
+.attendance-table th:nth-last-child(3),
+.attendance-table td:nth-last-child(1),
+.attendance-table td:nth-last-child(2),
+.attendance-table td:nth-last-child(3) {
+    min-width: 70px;
+    width: 70px;
+    font-weight: 700;
+    background: #f8fafc;
+}
+
+
+/* Header của Công / Giờ / Lỗi */
+
+.attendance-table thead th:nth-last-child(1),
+.attendance-table thead th:nth-last-child(2),
+.attendance-table thead th:nth-last-child(3) {
+    background: #020617 !important;
+    color: #fff !important;
+}
+
+
+/* =========================================================
+   STICKY COLUMN DIVIDER
+   Không dùng card-body::after
+========================================================= */
+
+.attendance-table thead th.employee-column::after,
+.attendance-table tbody td.employee-cell::after,
+.attendance-table .dept-row .dept-name-cell::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    width: 1px;
+    pointer-events: none;
+}
+
+/* Header */
+
+.attendance-table thead th.employee-column::after {
+    background: #60a5fa;
+}
+
+
+/* Body */
+
+.attendance-table tbody td.employee-cell::after {
+    background: #dbe2ea;
+}
+
+
+/* Department */
+
+.attendance-table .dept-row .dept-name-cell::after {
+    background: #bfdbfe;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.table-responsive {
+    position: relative;
+}
+
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
+    }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+.attendance-table-card .card-body {
+    position: relative;
+}
+
+    .attendance-table-card .card-body::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 210px;
+        width: 1px;
+        height: 46px;
+        background: rgba(255, 255, 255, .28);
+        z-index: 60;
+        pointer-events: none;
+    }
+
+/* =========================================================
+   LOADING
+========================================================= */
+.attendance-table-card.is-loading::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .55);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.attendance-table-card.is-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
+    margin-left: -17px;
+    border: 3px solid #dbeafe;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    z-index: 11;
+    animation: attendance-spin .7s linear infinite;
+}
+
+
+/* Mobile: cột Nhân viên đang là 180px */
+@media (max-width: 576px) {
+    .attendance-table-card .card-body::after {
+        left: 180px;
+    }
+}
+
+@keyframes attendance-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+    .attendance-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .attendance-kpi {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 576px) {
+    .attendance-header h2 {
+        font-size: 22px;
+    }
+
+    .attendance-kpi h3 {
+        font-size: 1.6rem;
+    }
+
+    .attendance-filter-card .card-body {
+        padding: 18px;
+    }
+
+    .employee-column,
+    .employee-cell {
+        width: 180px;
+        min-width: 180px;
+        max-width: 180px;
+    }
+}

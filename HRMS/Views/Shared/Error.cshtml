@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = ViewBag.Title ?? "Error";
+
+    string title = ViewBag.ErrorTitle ?? "Đã xảy ra lỗi";
+    string message = ViewBag.ErrorMessage ?? "Có lỗi xảy ra trong quá trình xử lý yêu cầu.";
+    string backUrl = ViewBag.BackUrl ?? Url.Action("Index", "Home");
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5">
+            <i class="fa-solid fa-triangle-exclamation text-danger"
+               style="font-size:64px;"></i>
+
+            <h2 class="mt-4 mb-3">@title</h2>
+
+            <p class="text-muted mb-4">
+                @message
+            </p>
+
+            <button class="btn btn-primary"
+                    onclick="location.href='@backUrl'">
+                Quay lại
+            </button>
+        </div>
+    </div>
+</div>

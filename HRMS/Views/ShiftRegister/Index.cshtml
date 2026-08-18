@@ -1,0 +1,283 @@
+﻿@{
+    ViewBag.Title = "Đăng ký ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model HRMS.ViewModels.ShiftRegisterPageViewModel
+
+<link href="~/CSS/over-time-index.css" rel="stylesheet" />
+<link href="~/CSS/select2.min.css" rel="stylesheet" />
+
+@using (Html.BeginForm("Create", "ShiftRegister", FormMethod.Post, new { id = "ShiftRegisterForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container-fluid">
+        <div class="row g-4 mt-3">
+
+            <!-- DANH SÁCH NHÂN VIÊN -->
+            <div class="col-xl-5">
+                <div class="card employee-card shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="section-title">
+                            <i class="fa-solid fa-users"></i>
+                            <h5 class="mb-0">Nhân viên áp dụng</h5>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="department-list">
+                            @{
+                                int employeeIndex = 0;
+                            }
+
+                            @foreach (var group in Model.Employees.GroupBy(x => x.TenPhongBan))
+                            {
+                                <details class="dept-card">
+                                    <summary class="dept-header">
+                                        <div class="dept-left">
+                                            <i class="fa-solid fa-sitemap"></i>
+                                            <span>@group.Key</span>
+                                        </div>
+
+                                        <span class="dept-badge">
+                                            @group.Count()
+                                        </span>
+                                    </summary>
+
+                                    <div class="dept-content">
+                                        <label class="select-all-row">
+                                            <input type="checkbox" class="check-all-department">
+                                            Chọn tất cả
+                                        </label>
+
+                                        @for (int i = 0; i < group.Count(); i++)
+                                        {
+                                            var nv = group.ElementAt(i);
+
+                                            bool isChecked =
+                                                Model.Request.EmployeeCDs != null &&
+                                                Model.Request.EmployeeCDs.Any(e => e.MaNhanVien == nv.MaNhanVien);
+
+                                            <label class="employee-row">
+                                                <input type="checkbox"
+                                                       class="employee-checkbox"
+                                                       name="Request.EmployeeCDs[@employeeIndex].MaNhanVien"
+                                                       value="@nv.MaNhanVien"
+                                                       data-name="@nv.TenNhanVien"
+                                                       data-code="@nv.MaNhanVien"
+                                                       data-dept="@nv.MaPhongBan"
+                                                       @(isChecked ? "checked=\"checked\"" : "") />
+
+                                                <input type="hidden"
+                                                       name="Request.EmployeeCDs[@employeeIndex].TenNhanVien"
+                                                       value="@nv.TenNhanVien" />
+
+                                                <span class="emp-info">
+                                                    <span class="emp-code">@nv.MaNhanVien</span>
+                                                    <span class="emp-name">@nv.TenNhanVien</span>
+                                                </span>
+                                            </label>
+
+                                            employeeIndex++;
+                                        }
+                                    </div>
+                                </details>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM -->
+            <div class="col-xl-7">
+                <div class="card ot-form-card shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="section-title">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <h5 class="mb-0">Thông tin đăng ký ca</h5>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Từ ngày
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.Request.FromDate, "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        type = "date",
+                                        id = "FromDate",
+                                        @class = "form-control",
+                                        required = "required"
+                                    })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Đến ngày
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(m => m.Request.ToDate, "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        type = "date",
+                                        id = "ToDate",
+                                        @class = "form-control",
+                                        required = "required"
+                                    })
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">
+                                    Ca làm việc
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select name="Request.ShiftTypeId"
+                                        id="ShiftTypeId"
+                                        class="form-select"
+                                        required>
+                                    <option value="">-- Chọn ca làm việc --</option>
+
+                                    @foreach (var shift in Model.ShiftTypes)
+                                    {
+                                        <option value="@shift.ShiftTypeId"
+                                                @(shift.ShiftTypeId == Model.Request.ShiftTypeId ? "selected" : "")>
+                                            @shift.ShiftName (@shift.StartTime.ToString(@"hh\:mm") - @shift.EndTime.ToString(@"hh\:mm"))
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">
+                                    Người xác nhận
+                                </label>
+
+                                @{
+                                    var approverGroups = Model.UserRoles
+                                        .Where(x => !string.IsNullOrEmpty(x.MaNhanVien))
+                                        .GroupBy(x => new
+                                        {
+                                            x.MaNhanVien,
+                                            x.TenNhanVien
+                                        })
+                                        .Select(g => new
+                                        {
+                                            MaNhanVien = g.Key.MaNhanVien,
+                                            TenNhanVien = g.Key.TenNhanVien,
+
+                                            DepartmentCodes = g
+                                                .Where(x => !string.IsNullOrEmpty(x.BoPhanQuanLy))
+                                                .Select(x => x.BoPhanQuanLy)
+                                                .Distinct()
+                                                .ToList(),
+
+                                            DepartmentNames = g
+                                                .Where(x => !string.IsNullOrEmpty(x.TenPhongBan))
+                                                .Select(x => x.TenPhongBan)
+                                                .Distinct()
+                                                .ToList()
+                                        })
+                                        .OrderBy(x => x.TenNhanVien)
+                                        .ToList();
+                                }
+
+                                <select name="Request.ConfirmUserCD"
+                                        id="ConfirmUserCD"
+                                        class="form-select approve-select">
+                                    <option value="">
+                                        -- Chọn người xác nhận --
+                                    </option>
+
+                                    @foreach (var approver in approverGroups)
+                                    {
+                                        var deptCodes = string.Join("|", approver.DepartmentCodes);
+                                        var deptText = approver.DepartmentNames.Any()
+                                            ? string.Join(", ", approver.DepartmentNames)
+                                            : "Chưa có bộ phận quản lý";
+
+                                        <option value="@approver.MaNhanVien"
+                                                data-depts="@deptCodes"
+                                                @(approver.MaNhanVien == Model.Request.ConfirmUserCD ? "selected" : "")>
+                                            @approver.TenNhanVien (@approver.MaNhanVien) - @deptText
+                                        </option>
+                                    }
+                                </select>
+
+                                <div id="confirmUserHint" class="text-danger small mt-2" style="display:none;">
+                                    Không có người xác nhận phù hợp với bộ phận đã chọn.
+                                </div>
+
+                                <div class="form-text mt-1">
+                                    Nếu người viết phiếu có quyền quản lý toàn bộ bộ phận của nhân viên đã chọn, phiếu sẽ được duyệt tự động.
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">
+                                    Lý do
+                                </label>
+
+                                @Html.TextAreaFor(m => m.Request.Reason,
+                                    new
+                                    {
+                                        rows = 3,
+                                        @class = "form-control",
+                                        placeholder = "Nhập lý do đăng ký ca nếu có..."
+                                    })
+                            </div>
+                        </div>
+
+                        <!-- SELECTED EMPLOYEE -->
+                        <div class="selected-box">
+                            <h4>Nhân viên đã chọn</h4>
+
+                            <div id="empError" class="alert alert-danger m-3" style="display:none;">
+                                ⚠ Bạn phải chọn ít nhất 1 nhân viên
+                            </div>
+
+                            <table class="selected-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã nhân viên</th>
+                                        <th>Tên nhân viên</th>
+                                        <th>Bộ phận</th>
+                                        <th width="70"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="selectedBody">
+                                    <tr class="empty-row">
+                                        <td colspan="4" class="selected-empty">
+                                            <i class="fa-regular fa-user"></i>
+                                            <span>Chưa có nhân viên nào được chọn</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa-solid fa-paper-plane me-2"></i>
+                                Gửi đăng ký
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+<script src="~/JS/employee-confirm-selector.js"></script>
+<script src="~/JS/shift-register.js"></script>

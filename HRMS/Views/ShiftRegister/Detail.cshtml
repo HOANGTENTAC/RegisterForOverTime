@@ -1,0 +1,355 @@
+﻿@model HRMS.ViewModels.ShiftRegisterDetailPageViewModel
+@using HRMS.Utils;
+
+@{
+    ViewBag.Title = "Chi tiết đăng ký ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var user = Session["LoginInfo"] as HRMS.Models.UsersModel;
+
+    bool canAdmin = ViewBag.CanAdminShiftRegister != null && (bool)ViewBag.CanAdminShiftRegister;
+
+    bool canHrProcess = ViewBag.CanHrProcessShiftRegister != null && (bool)ViewBag.CanHrProcessShiftRegister;
+
+    bool canEdit = ViewBag.CanEditShiftRegister != null && (bool)ViewBag.CanEditShiftRegister;
+
+    var permissions = Model.GetPermissions(
+        currentUserCD: user != null ? user.MaNhanVien : "",
+        canAdmin: canAdmin,
+        canHrProcess: canHrProcess,
+        canEdit: canEdit
+    );
+}
+
+<link href="~/CSS/over-time-details.css" rel="stylesheet" />
+
+<div class="container-fluid ot-detail-page">
+
+    <div class="ot-breadcrumb">
+        <a href="@Url.Action("Index", "ShiftRegister")">Đăng ký ca</a>
+        /
+        <span>Chi tiết</span>
+    </div>
+
+    <div class="card shadow-sm page-header-card">
+        <div class="card-body page-header-content">
+            <div class="page-title">
+                <button class="btn btn-light"
+                        onclick="history.length > 1 ? history.back() : location.href='@Url.Action("Index", "Home")'">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h2>Chi tiết đăng ký ca</h2>
+                    <div class="ticket-meta">
+                        Mã phiếu:
+                        <span class="ticket-code">@Model.Ticket.TicketNo</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                @Html.RenderStatusBadge(Model.Ticket.StatusId, Model.Ticket.StatusName)
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm ot-card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        Thông tin đăng ký
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="info-label">Ngày yêu cầu</div>
+                        <div class="info-value">
+                            @Model.Header.RequestDate.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Thời gian áp dụng</div>
+                        <div class="info-value">
+                            @Model.Header.FromDate.ToString("dd/MM/yyyy")
+                            -
+                            @Model.Header.ToDate.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Người xác nhận</div>
+                        <div class="info-value primary">
+                            @if (!string.IsNullOrEmpty(Model.Header.ConfirmUserCD))
+                            {
+                                @($"{Model.Header.ConfirmUserCD} - {Model.Header.ConfirmUserName}")
+                            }
+                            else
+                            {
+                                <span>Không có</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="info-row full">
+                        <div class="info-label">Lý do</div>
+                        <div class="info-value note">
+                            @Model.Header.Reason
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if ((Model.Ticket.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.ManagerRejected
+            || Model.Ticket.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.HrRejected)
+            && !string.IsNullOrWhiteSpace(Model.Ticket.Reason))
+            {
+                <div class="card shadow-sm reject-card">
+                    <div class="card-header">
+                        <h5 class="card-title text-danger">
+                            Lý do từ chối
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="reject-text">
+                            @Model.Ticket.Reason
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-lg-7">
+            <div class="card shadow-sm ot-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">
+                        Nhân viên và ca áp dụng
+                    </h5>
+                    <span class="count-badge">
+                        @(Model.Details?.Select(x => x.EmployeeCD).Distinct().Count() ?? 0) người
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="employee-list">
+                        @*@foreach (var detail in Model.Details)
+                            {
+                                <div class="employee-item">
+                                    <div class="employee-avatar">
+                                        @(string.IsNullOrEmpty(detail.EmployeeName) ? "?" : detail.EmployeeName.Substring(0, 1))
+                                    </div>
+                                    <div class="employee-content">
+                                        <div class="employee-name">
+                                            @detail.EmployeeName
+                                            <span class="text-muted">
+                                                (@detail.EmployeeCD)
+                                            </span>
+                                        </div>
+                                        <div class="employee-sub">
+                                            @detail.TenPhongBan
+                                            •
+                                            @detail.WorkDate.ToString("dd/MM/yyyy")
+                                        </div>
+                                        <div class="employee-sub">
+                                            @detail.ShiftName
+                                            (@detail.StartTime.ToString(@"hh\:mm") - @detail.EndTime.ToString(@"hh\:mm"))
+                                        </div>
+                                    </div>
+                                    <div class="luuyke-tag luuyke-normal">
+                                        @detail.ShiftCode
+                                    </div>
+                                </div>
+                            }*@
+
+                        @foreach (var empGroup in Model.Details.GroupBy(x => new
+                        {
+                            x.EmployeeCD,
+                            x.EmployeeName,
+                            x.TenPhongBan
+                        }))
+                        {
+                            var first = empGroup.First();
+
+                            <div class="employee-item"
+                                 data-emp="@first.EmployeeCD"
+                                 data-header="@Model.Header.Id"
+                                 data-ticket="@Model.Ticket.Id">
+
+                                <div class="employee-avatar">
+                                    @first.EmployeeName.ToAvatarInitials()
+                                </div>
+
+                                <div class="employee-content">
+
+                                    <div class="employee-name">
+                                        @first.EmployeeName
+                                        <span class="text-muted">
+                                            (@first.EmployeeCD)
+                                        </span>
+                                    </div>
+
+                                    <div class="employee-sub">
+                                        @first.TenPhongBan
+                                    </div>
+
+                                    <div class="employee-sub">
+                                        @foreach (var item in empGroup.OrderBy(x => x.WorkDate))
+                                        {
+                                            <div>
+                                                @item.WorkDate.ToString("dd/MM/yyyy")
+                                                •
+                                                @item.ShiftName
+                                                (@item.StartTime.ToString(@"hh\:mm") - @item.EndTime.ToString(@"hh\:mm"))
+                                            </div>
+                                        }
+                                    </div>
+
+                                </div>
+
+                                <div class="luuyke-tag luuyke-normal">
+                                    @empGroup.Count() ngày
+                                </div>
+
+                                @if (permissions.CanRemoveDetail)
+                                {
+                                    <button type="button"
+                                            class="btn-remove"
+                                            data-emp="@first.EmployeeCD"
+                                            data-header="@Model.Header.Id"
+                                            data-ticket="@Model.Ticket.Id"
+                                            title="Xoá nhân viên khỏi phiếu">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                }
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <div class="action-group">
+            @if (permissions.CanEditTicket)
+            {
+                <button class="btn btn-warning"
+                        onclick="location.href='@Url.Action("Edit", "ShiftRegister", new { tblTicketId = Model.Ticket.Id })'">
+                    <i class="fa fa-pen"></i>
+                    Chỉnh sửa
+                </button>
+            }
+        </div>
+
+        <div class="action-group">
+            <button class="btn btn-light"
+                    onclick="history.length > 1 ? history.back() : location.href='@Url.Action("Index", "Home")'">
+                Quay lại
+            </button>
+
+            @if (permissions.CanCancelTicket)
+            {
+                <button class="btn btn-danger"
+                        onclick="location.href='@Url.Action("Cancel", "ShiftRegister", new { tblTicketId = Model.Ticket.Id })'">
+                    Hủy phiếu
+                </button>
+            }
+
+            @if (permissions.CanManagerApproveReject)
+            {
+                <button class="btn btn-outline-danger"
+                        id="btnManagerReject"
+                        data-ticket="@Model.Ticket.Id">
+                    Quản lý từ chối
+                </button>
+
+                <button class="btn btn-primary"
+                        onclick="location.href='@Url.Action("ManagerAccept", "ShiftRegister", new { tblTicketId = Model.Ticket.Id })'">
+                    Quản lý duyệt
+                </button>
+            }
+
+            @if (permissions.CanHrFinishReject)
+            {
+                <button class="btn btn-outline-danger"
+                        id="btnHrReject"
+                        data-ticket="@Model.Ticket.Id">
+                    Nhân sự từ chối
+                </button>
+
+                <button class="btn btn-success"
+                        onclick="location.href='@Url.Action("HrFinish", "ShiftRegister", new { tblTicketId = Model.Ticket.Id })'">
+                    Hoàn tất
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '#btnReject', function (e) {
+        e.preventDefault();
+
+        const ticketId = $(this).data('ticket');
+
+        Swal.fire({
+            title: 'Nhập lý do từ chối',
+            input: 'textarea',
+            inputPlaceholder: 'Nhập lý do...',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Huỷ',
+            inputValidator: (value) => {
+                if (!value || value.trim() === '') {
+                    return 'Vui lòng nhập lý do!';
+                }
+            }
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            window.location.href =
+                '@Url.Action("Reject", "ShiftRegister")'
+                + '?tblTicketId=' + ticketId
+                + '&reason=' + encodeURIComponent(result.value);
+        });
+    });
+
+    $(document).on('click', '.btn-remove', function () {
+    const ticketId = $(this).data('ticket');
+    const empCd = $(this).data('emp');
+    const headerId = $(this).data('header');
+
+    Swal.fire({
+        title: 'Xác nhận xoá',
+        text: 'Bạn có chắc muốn xoá nhân viên này khỏi phiếu đăng ký ca?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có',
+        cancelButtonText: 'Không'
+    }).then((result) => {
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        $.post('@Url.Action("RemoveDetail", "ShiftRegister")', {
+            ticketID: ticketId,
+            employeeCD: empCd,
+            headerID: headerId
+        })
+        .done(function (res) {
+            if (res && res.success) {
+                toastr.success(res.message);
+
+                $(`.employee-item[data-ticket='${ticketId}'][data-emp='${empCd}'][data-header='${headerId}']`)
+                    .remove();
+
+                const count = $('.employee-item').length;
+                $('.count-badge').text(count + ' người');
+            } else {
+                toastr.error(res && res.message ? res.message : 'Không thể xoá nhân viên khỏi phiếu.');
+            }
+        })
+        .fail(function () {
+            toastr.error('Có lỗi xảy ra khi xoá nhân viên khỏi phiếu.');
+        });
+    });
+});
+</script>
