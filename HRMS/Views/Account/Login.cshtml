@@ -1,0 +1,114 @@
+﻿@model HRMS.Models.UsersModel
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRMS Login</title>
+    <link href="~/Content/fontawesome/css/all.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.min.js"></script>
+    <script src="~/Scripts/toastr-message.js"></script>
+    <link href="~/Content/login.css" rel="stylesheet" />
+    @{
+        var alert = new
+        {
+            Message = TempData["ToastrMessage"],
+            Type = TempData["ToastrType"]
+        };
+    }
+
+</head>
+<body>
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="login-container">
+        <div class="login-left">
+            <div class="brand">
+                <h1>HRMS</h1>
+                <h3>Human Resource Management System</h3>
+                <p>
+                    Quản lý nhân sự thông minh,
+                    tối ưu quy trình tuyển dụng,
+                    chấm công và đánh giá nhân viên.
+                </p>
+            </div>
+            <img src="~/Images/logo.png"
+                 alt="HRMS">
+        </div>
+        <div class="login-right">
+            <div class="login-card">
+                <div class="logo-circle">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p class="sub-text">
+                    Đăng nhập để tiếp tục
+                </p>
+                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label>Tài khoản</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-user"></i>
+                            @Html.TextBoxFor(m => m.MaNhanVien, new { placeholder = "Nhập tài khoản" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mật khẩu</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-lock"></i>
+                            @* @Html.PasswordFor(m => m.MatKhau, new { placeholder = "Nhập mật khẩu" })*@
+                            <input type="password" name="MatKhau" value="@Model.MatKhau" placeholder="Nhập mật khẩu" />
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <label>
+                            @Html.CheckBoxFor(m => m.RememberMe) Ghi nhớ đăng nhập
+                        </label>
+                        <a href="@Url.Action("ForgotPassword", "Account")" class="btn btn-link">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+                    <button id="btnLogin" class="btn-login" type="submit"> Đăng nhập</button>
+                }
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector("form")
+            .addEventListener("submit", function () {
+                let btn = document.getElementById("btnLogin");
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<i class="fa fa-spinner fa-spin"></i> Đang đăng nhập...';
+            });
+    </script>
+    <script>
+    $(function () {
+        var alert = @Html.Raw(Json.Encode(alert));
+
+        if (alert && alert.Message) {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": 4000
+            };
+            toastr[alert.Type](alert.Message);
+        }
+    });
+    </script>
+</body>
+</html>

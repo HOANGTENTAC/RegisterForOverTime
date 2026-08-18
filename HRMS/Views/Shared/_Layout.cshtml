@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - HRMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS -->
+    <link href="~/Content/fontawesome/css/all.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/CSS/custom.css" rel="stylesheet" />
+    @*<link href="~/CSS/dashboard.css" rel="stylesheet" />*@
+
+    <!-- JS -->
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/toastr.min.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/JS/pagination.js"></script>
+
+    @{
+        var user = Session["LoginInfo"] as HRMS.Models.UsersModel;
+        var alert = new { Message = TempData["ToastrMessage"], Type = TempData["ToastrType"] };
+    }
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar custom-navbar px-4 position-fixed top-0 w-100 z-3">
+        <div class="container-fluid">
+            <!-- Toggle sidebar mobile -->
+            <button type="button" class="btn btn-outline-light d-lg-none" id="sidebarToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Profile -->
+            <div class="ms-auto d-flex align-items-center gap-3">
+
+                @if (user != null && user.IsAdmin)
+                {
+                    <div class="dropdown topbar-notification">
+
+                        <!-- Notification Button -->
+                        <button type="button"
+                                id="btnNotification"
+                                class="notification-btn"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                title="Thông báo">
+
+                            <i class="fa-solid fa-bell"></i>
+
+                            <span id="passwordResetBadge"
+                                  class="notification-badge d-none">
+                                0
+                            </span>
+                        </button>
+
+                        <!-- Notification Dropdown -->
+                        <div class="dropdown-menu dropdown-menu-end notification-menu">
+
+                            <!-- Header -->
+                            <div class="notification-menu-header">
+                                <strong>Thông báo</strong>
+                            </div>
+
+                            <!-- Notification Content -->
+                            <div id="notificationContent"
+                                 class="notification-menu-body">
+                                    Không có thông báo mới
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+                <!-- Profile -->
+                <div class="dropdown">
+                    <button type="button" class="btn profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="@user.Avatar" alt="Avatar" class="avatar" />
+                        <span>
+                            @user.TenNhanVien
+                        </span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!-- Header -->
+                        <li>
+                            <div class="profile-header">
+                                <img src="@user.Avatar" alt="Avatar" class="profile-header-avatar" />
+                                <div>
+                                    <strong>
+                                        @user.TenNhanVien
+                                    </strong>
+                                    <small>
+                                        @user.MaNhanVien
+                                    </small>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <!-- Menu -->
+                        <li>
+                            <a class="dropdown-item text-opacity-100" href="@Url.Action("Detail","Employees",  new { employeeCd = user.MaNhanVien })">
+                                <i class="fa-solid fa-user me-2"></i>
+                                Thông tin cá nhân
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item text-opacity-100" href="@Url.Action("ChangePassword","Account")">
+                                <i class="fa-solid fa-key me-2"></i>
+                                Đổi mật khẩu
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item text-danger" href="@Url.Action("Logout","Account")">
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Layout chính -->
+    <div class="layout-wrapper">
+        <!-- Sidebar -->
+        <aside class="custom-sidebar text-white p-3" id="sidebar">
+            <div class="d-flex align-items-center mb-4">
+                <i class="fa-solid fa-users fs-4 me-2"></i>
+                <span class="fw-bold">HRMS</span>
+            </div>
+
+            <nav class="nav flex-column">
+                <!-- Trang chủ -->
+                <a class="nav-link active" href="@Url.Action("Index","Home")">
+                    <i class="fa-solid fa-house me-2"></i> Trang chủ
+                </a>
+
+                <!-- Nhân sự -->
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuNhanSu" role="button">
+                    <i class="fa-solid fa-id-card me-2"></i> Nhân sự
+                    <i class="fa-solid fa-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse" id="menuNhanSu">
+                    <nav class="nav flex-column ms-3">
+                        <a class="nav-link" href="@Url.Action("Index","Employees")">
+                            Nhân viên
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Chấm công -->
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuChamCong" role="button">
+                    <i class="fa-solid fa-clock me-2"></i> Chấm công
+                    <i class="fa-solid fa-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse" id="menuChamCong">
+                    <nav class="nav flex-column ms-3">
+                        <a class="nav-link" href="@Url.Action("Index","ShiftRegister")">
+                            Đăng ký ca
+                        </a>
+                        <a class="nav-link" href="@Url.Action("Index","OverTime")">
+                            Đăng ký tăng ca
+                        </a>
+                        <a class="nav-link disabled text-secondary" href="#">Xin nghỉ phép <i class="fa-solid fa-lock ms-1"></i></a>
+                    </nav>
+                </div>
+
+                <!-- Báo cáo -->
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuReports" role="button">
+                    <i class="fa-solid fa-chart-line me-2"></i> Báo cáo
+                    <i class="fa-solid fa-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse" id="menuReports">
+                    <nav class="nav flex-column ms-3">
+                        <a class="nav-link" href="@Url.Action("Attendance","Reports")">Chấm công</a>
+                        <a class="nav-link" href="@Url.Action("Overtime","Reports")">Tăng ca</a>
+                    </nav>
+                </div>
+
+                @if (user != null && user.IsAdmin)
+                {
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#menuHeThong" role="button" aria-expanded="false" aria-controls="menuHeThong">
+                        <i class="fa-solid fa-gear me-2"></i> Hệ thống
+                        <i class="fa-solid fa-chevron-down ms-auto"></i>
+                    </a>
+
+                    <div class="collapse" id="menuHeThong">
+                        <nav class="nav flex-column ms-3">
+                            <a class="nav-link" href="@Url.Action("Index", "Accounts")">
+                                Tài khoản người dùng
+                            </a>
+                        </nav>
+                    </div>
+                }
+
+            </nav>
+        </aside>
+
+        <!-- Nội dung chính -->
+        <main class="flex-grow-1 p-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- JS Toggle Sidebar -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+
+    <!-- Toastr Alert -->
+    <script>
+        $(function () {
+            var alert = @Html.Raw(Json.Encode(alert));
+            if (alert && alert.Message) {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    newestOnTop: true,
+                    positionClass: "toast-top-right",
+
+                    showDuration: 250,
+                    hideDuration: 250,
+
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut",
+
+                    timeOut: 3500,
+                    extendedTimeOut: 1000
+                };
+                toastr[alert.Type](alert.Message);
+            }
+        });
+    </script>
+    @if (user != null && user.IsAdmin)
+    {
+        <script>
+        window.notificationUrls = {
+            passwordResetSummary: '@Url.Action("PasswordResetSummary", "Notifications")'
+        };
+        </script>
+
+        @*@Url.Content("~/Content/Site.css")*@
+    }
+    <script src="~/JS/notifications.js"></script>
+
+</body>
+</html>

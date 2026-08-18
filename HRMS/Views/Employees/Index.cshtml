@@ -1,0 +1,202 @@
+﻿@model HRMS.ViewModels.EmployeePageViewModel
+
+@{
+    ViewBag.Title = "Nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/CSS/employees.css" />
+    <div class="employees-page">
+
+        <div class="employees-header">
+            <div>
+                <h2>Nhân viên</h2>
+                <p>Quản lý danh sách và hồ sơ nhân viên</p>
+            </div>
+        </div>
+
+        <div class="card employees-filter-card">
+            <div class="card-header">
+                <i class="fa-solid fa-filter me-2"></i>
+                Bộ lọc nhân viên
+            </div>
+
+            <div class="card-body">
+                @using (Html.BeginForm("Index", "Employees", FormMethod.Get, new { id = "employeeFilterForm" }))
+                {
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-xl-4 col-lg-6">
+                            <label class="form-label">Từ khóa</label>
+                            <input id="employeeKeyword"
+                                   name="keyword"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Mã, tên, mã chấm công hoặc mã thẻ"
+                                   value="@Model.Keyword" />
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6">
+                            <label class="form-label">Phòng ban</label>
+                            <select id="employeeDept"
+                                    name="dept"
+                                    class="form-select">
+                                <option value="">Tất cả phòng ban</option>
+                                @foreach (var dept in Model.Departments)
+                                {
+                                    <option value="@dept.MaPhongBan"
+                                            @(Model.SelectedDept == dept.MaPhongBan ? "selected" : "")>
+                                        @dept.TenPhongBan
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select id="employeeStatus"
+                                    name="status"
+                                    class="form-select">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Đang làm việc" @(Model.SelectedStatus == "Đang làm việc" ? "selected" : "")>
+                                    Đang làm việc
+                                </option>
+                                <option value="Tạm nghỉ" @(Model.SelectedStatus == "Tạm nghỉ" ? "selected" : "")>
+                                    Tạm nghỉ
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-6">
+                            <label class="form-label">Hành động</label>
+                            <button type="submit"
+                                    class="btn btn-primary w-100 btn-employee-search">
+                                <i class="fa-solid fa-search me-1"></i>
+                                Tìm kiếm
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row g-4 employees-summary">
+            <div class="col-xl-3 col-md-6">
+                <div class="employees-kpi kpi-primary">
+                    <div>
+                        <span>Tổng nhân viên</span>
+                        <h3 id="kpiTotalEmployees">@Model.TotalEmployees</h3>
+                    </div>
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="employees-kpi kpi-success">
+                    <div>
+                        <span>Phòng ban</span>
+                        <h3 id="kpiTotalDepartments">@Model.TotalDepartments</h3>
+                    </div>
+                    <i class="fa-solid fa-building"></i>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="employees-kpi kpi-warning">
+                    <div>
+                        <span>Nhân viên mới</span>
+                        <h3 id="kpiNewEmployees">@Model.TotalNewEmployees</h3>
+                    </div>
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="employees-kpi kpi-danger">
+                    <div>
+                        <span>Tham gia bảo hiểm</span>
+                        <h3 id="kpiInsurance">@Model.TotalInsurance</h3>
+                    </div>
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card employees-table-card">
+            <div class="card-header">
+                <i class="fa-solid fa-table me-2"></i>
+                Danh sách nhân viên
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered employees-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Mã NV</th>
+                                <th>Họ tên</th>
+                                <th>Mã chấm công</th>
+                                <th>Mã thẻ</th>
+                                <th>Phòng ban</th>
+                                <th>Ngày vào làm</th>
+                                <th>Bảo hiểm</th>
+                                <th>Trạng thái</th>
+                                <th>Hồ sơ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            @foreach (var emp in Model.Employees)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@emp.EmployeeCD</td>
+                                    <td>
+                                        <div class="employee-name">
+                                            <strong>@emp.TenNhanVien</strong>
+                                            <span>@emp.EmployeeCD</span>
+                                        </div>
+                                    </td>
+                                    <td>@emp.MaChamCong</td>
+                                    <td>@emp.MaThe</td>
+                                    <td>@emp.TenPhongBan</td>
+                                    <td>
+                                        @(emp.NgayVaoLamViec.HasValue
+                                        ? emp.NgayVaoLamViec.Value.ToString("dd/MM/yyyy")
+                                        : "")
+                                    </td>
+                                    <td>
+                                        @if (emp.DangThamGiaBaoHiem)
+                                        {
+                                            <span class="employee-badge badge-success">Có</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="employee-badge badge-muted">Không</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="employee-status">@emp.TrangThai</span>
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("Detail", "Employees", new { employeeCd = emp.EmployeeCD })"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fa-solid fa-eye me-1"></i>
+                                            Xem
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    window.employeeUrls = {
+        data: '@Url.Action("Data", "Employees")',
+        detail: '@Url.Action("Detail", "Employees")'
+    };
+</script>
+<script src="~/JS/employees.js"></script>

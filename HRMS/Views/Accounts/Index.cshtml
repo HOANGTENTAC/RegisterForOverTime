@@ -1,0 +1,498 @@
+﻿@model HRMS.ViewModels.AccountPageViewModel
+
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var accessLevels = ViewBag.AccessLevels as List<SelectListItem>;
+}
+
+<link href="~/CSS/accounts.css" rel="stylesheet" />
+
+<div class="accounts-page">
+
+    <!-- HEADER -->
+    <div class="accounts-header">
+        <div>
+            <h2>Quản lý tài khoản</h2>
+            <p>Quản lý tài khoản đăng nhập, phân quyền và phạm vi bộ phận</p>
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="card accounts-filter-card">
+        <div class="card-header">
+            <i class="fa-solid fa-filter me-2"></i>
+            Bộ lọc tài khoản
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Index", "Accounts", FormMethod.Get, new { id = "accountFilterForm" }))
+            {
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Từ khóa</label>
+                        <input id="accountKeyword"
+                               name="keyword"
+                               type="text"
+                               class="form-control"
+                               placeholder="Mã hoặc tên nhân viên"
+                               value="@Model.Keyword" />
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Phòng ban</label>
+                        <select id="accountDept"
+                                name="dept"
+                                class="form-select">
+                            <option value="">Tất cả phòng ban</option>
+
+                            @foreach (var dept in Model.Departments)
+                            {
+                                <option value="@dept.MaPhongBan"
+                                        @(Model.SelectedDept == dept.MaPhongBan ? "selected" : "")>
+                                    @dept.TenPhongBan
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Cấp quyền</label>
+                        <select id="accountAccessLevel"
+                                name="accessLevel"
+                                class="form-select">
+                            <option value="">Tất cả cấp quyền</option>
+
+                            @if (accessLevels != null)
+                            {
+                                foreach (var item in accessLevels)
+                                {
+                                    <option value="@item.Value"
+                                            @(Model.SelectedAccessLevel.HasValue && Model.SelectedAccessLevel.Value.ToString() == item.Value ? "selected" : "")>
+                                        @item.Text
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-6">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="accountStatus"
+                                name="status"
+                                class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="has-account" @(Model.SelectedStatus == "has-account" ? "selected" : "")>
+                                Đã tạo tài khoản
+                            </option>
+                            <option value="no-account" @(Model.SelectedStatus == "no-account" ? "selected" : "")>
+                                Chưa có tài khoản
+                            </option>
+                            <option value="reset-request" @(Model.SelectedStatus == "reset-request" ? "selected" : "")>
+                                Yêu cầu cấp lại mật khẩu
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-xl-1 col-lg-12">
+                        <label class="form-label">Tìm</label>
+                        <button type="submit"
+                                class="btn btn-primary w-100 btn-account-search">
+                            <i class="fa-solid fa-search"></i>
+                        </button>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="row g-4 accounts-summary">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="accounts-kpi kpi-primary">
+                <div>
+                    <span>Tổng tài khoản</span>
+                    <h3 id="kpiTotalAccounts">@Model.TotalAccounts</h3>
+                </div>
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="accounts-kpi kpi-success">
+                <div>
+                    <span>Quản trị viên</span>
+                    <h3 id="kpiTotalAdmins">@Model.TotalAdmins</h3>
+                </div>
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="accounts-kpi kpi-warning">
+                <div>
+                    <span>Cấp quản lý</span>
+                    <h3 id="kpiTotalManagers">@Model.TotalManagers</h3>
+                </div>
+                <i class="fa-solid fa-users-gear"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="accounts-kpi kpi-danger">
+                <div>
+                    <span>Chưa có tài khoản</span>
+                    <h3 id="kpiTotalNoAccount">@Model.TotalNoAccount</h3>
+                </div>
+                <i class="fa-solid fa-user-xmark"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="card accounts-table-card">
+        <div class="card-header">
+            <i class="fa-solid fa-table me-2"></i>
+            Danh sách tài khoản
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+
+                <table class="table table-bordered accounts-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Mã NV</th>
+                            <th>Họ tên</th>
+                            <th>Phòng ban</th>
+                            <th>Quyền cao nhất</th>
+                            <th>Phạm vi quản lý</th>
+                            <th>Số bộ phận</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày cập nhật</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="accountTableBody">
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td class="fw-bold">@user.EmployeeCD</td>
+
+                                <td>
+                                    <div class="account-user">
+                                        <strong>@user.TenNhanVien</strong>
+                                        <span>@user.EmployeeCD</span>
+                                    </div>
+                                </td>
+
+                                <td>@user.TenPhongBan</td>
+
+                                <td>
+                                    <span class="account-role-badge"
+                                          data-level="@user.HighestAccessLevel">
+                                        @user.HighestAccessLevelName
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (string.IsNullOrEmpty(user.ManagedDepartmentsText))
+                                    {
+                                        <span class="text-muted">Chưa phân quyền</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@user.ManagedDepartmentsText</span>
+                                    }
+                                </td>
+
+                                <td class="text-center fw-bold">
+                                    @user.ManagedDepartmentsCount
+                                </td>
+
+                                <td>
+                                    @if (user.HasAccount)
+                                    {
+                                        <span class="account-status status-active">
+                                            Đã tạo tài khoản
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="account-status status-missing">
+                                            Chưa có tài khoản
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @(user.NgayCapNhat.HasValue
+                                        ? user.NgayCapNhat.Value.ToString("dd/MM/yyyy HH:mm")
+                                        : "")
+                                </td>
+
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @if (!user.HasAccount)
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm btn-success btn-create-account"
+                                                    data-employee-cd="@user.EmployeeCD"
+                                                    data-employee-name="@user.TenNhanVien">
+                                                <i class="fa-solid fa-user-plus me-1"></i>
+                                                Tạo
+                                            </button>
+                                        }
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary btn-manage-role"
+                                                data-employee-cd="@user.EmployeeCD"
+                                                data-employee-name="@user.TenNhanVien">
+                                            <i class="fa-solid fa-user-gear me-1"></i>
+                                            Quyền
+                                        </button>
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-warning btn-reset-password"
+                                                data-employee-cd="@user.EmployeeCD"
+                                                data-employee-name="@user.TenNhanVien">
+                                            <i class="fa-solid fa-key me-1"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL PHAN QUYEN -->
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content accounts-modal">
+
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-user-gear me-2"></i>
+                        Phân quyền tài khoản
+                    </h5>
+                    <p class="modal-subtitle mb-0" id="roleModalEmployeeText"></p>
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="roleEmployeeCd" />
+
+                <div class="row g-3 align-items-end mb-4">
+
+                    <div class="col-xl-5 col-lg-6">
+                        <label class="form-label">Bộ phận quản lý</label>
+                        <select id="roleDept" class="form-select">
+                            <option value="">Chọn bộ phận</option>
+
+                            @foreach (var dept in Model.Departments)
+                            {
+                                <option value="@dept.MaPhongBan">
+                                    @dept.TenPhongBan
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-6">
+                        <label class="form-label">Cấp quyền</label>
+                        <select id="roleAccessLevel" class="form-select">
+                            <option value="">Chọn cấp quyền</option>
+
+                            @if (accessLevels != null)
+                            {
+                                foreach (var item in accessLevels)
+                                {
+                                    <option value="@item.Value">
+                                        @item.Text
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-12">
+                        <label class="form-label">Hành động</label>
+                        <button type="button"
+                                class="btn btn-primary w-100"
+                                id="btnSaveRole">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>
+                            Lưu phân quyền
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="role-list-title">
+                    Danh sách quyền hiện tại
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered role-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Bộ phận quản lý</th>
+                                <th>Cấp quyền</th>
+                                <th>Ngày cập nhật</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="roleTableBody">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Chưa tải dữ liệu phân quyền
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RESET PASSWORD -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content accounts-modal">
+
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-key me-2"></i>
+                        Reset mật khẩu
+                    </h5>
+                    <p class="modal-subtitle mb-0" id="resetPasswordEmployeeText"></p>
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="resetEmployeeCd" />
+
+                <div class="mb-3">
+                    <label class="form-label">Mật khẩu mới</label>
+                    <div class="input-group">
+                        <input id="resetNewPassword"
+                               type="password"
+                               class="form-control"
+                               placeholder="Nhập mật khẩu mới" />
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                id="btnToggleResetPassword">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="btn btn-outline-secondary w-100 mb-2"
+                        id="btnUseDefaultPassword">
+                    Dùng mật khẩu mặc định: Tent@c
+                </button>
+
+                <button type="button"
+                        class="btn btn-warning w-100"
+                        id="btnResetPassword">
+                    <i class="fa-solid fa-rotate-right me-1"></i>
+                    Reset mật khẩu
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CREATE ACCOUNT -->
+<div class="modal fade" id="createAccountModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content accounts-modal">
+
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-user-plus me-2"></i>
+                        Tạo tài khoản
+                    </h5>
+                    <p class="modal-subtitle mb-0" id="createAccountEmployeeText"></p>
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="createEmployeeCd" />
+
+                <div class="mb-3">
+                    <label class="form-label">Mật khẩu ban đầu</label>
+                    <div class="input-group">
+                        <input id="createPassword"
+                               type="password"
+                               class="form-control"
+                               value="Tent@c" />
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                id="btnToggleCreatePassword">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="btn btn-success w-100"
+                        id="btnCreateAccount">
+                    <i class="fa-solid fa-user-plus me-1"></i>
+                    Tạo tài khoản
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.accountUrls = {
+        data: '@Url.Action("Data", "Accounts")',
+        getRoles: '@Url.Action("GetRoles", "Accounts")',
+        saveRole: '@Url.Action("SaveRole", "Accounts")',
+        deleteRole: '@Url.Action("DeleteRole", "Accounts")',
+        resetPassword: '@Url.Action("ResetPassword", "Accounts")',
+        createAccount: '@Url.Action("CreateAccount", "Accounts")'
+    };
+</script>
+<script src="~/JS/accounts.js"></script>

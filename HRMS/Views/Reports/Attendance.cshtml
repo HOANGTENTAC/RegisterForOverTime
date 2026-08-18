@@ -1,0 +1,235 @@
+﻿@model HRMS.ViewModels.AttendanceReportPageViewModel
+
+@{
+    ViewBag.Title = "Báo cáo chấm công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/CSS/attendance-report.css" rel="stylesheet" />
+
+<div class="attendance-report-page">
+
+    <div class="attendance-header">
+        <div>
+            <h2>Báo cáo chấm công</h2>
+            <p>Kiểm tra chấm công theo tháng, phòng ban và nhân viên</p>
+        </div>
+    </div>
+
+    <div class="card attendance-filter-card">
+        <div class="card-header">
+            <i class="fa-solid fa-filter me-2"></i>
+            Bộ lọc báo cáo
+        </div>
+
+        <div class="card-body">
+            <form id="attendanceReportForm" method="get">
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Tháng</label>
+                        <input type="month"
+                               id="attendanceMonth"
+                               name="month"
+                               class="form-control"
+                               value="@Model.SelectedMonth" />
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Phòng ban</label>
+                        <select id="attendanceDept"
+                                name="dept"
+                                class="form-select">
+                            <option value="">Tất cả phòng ban</option>
+
+                            @foreach (var dept in Model.Departments)
+                            {
+                                <option value="@dept.MaPhongBan"
+                                        @(Model.SelectedDept == dept.MaPhongBan ? "selected" : "")>
+                                    @dept.TenPhongBan
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Nhân viên</label>
+                        <input type="text"
+                               id="attendanceEmployee"
+                               name="employee"
+                               class="form-control"
+                               placeholder="Mã hoặc tên nhân viên"
+                               value="@Model.SelectedEmployee" />
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="attendanceStatus"
+                                name="status"
+                                class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="LATE_IN" @(Model.SelectedStatus == "LATE_IN" ? "selected" : "")>Vào trễ</option>
+                            <option value="EARLY_OUT" @(Model.SelectedStatus == "EARLY_OUT" ? "selected" : "")>Ra sớm</option>
+                            <option value="MISSING_OUT" @(Model.SelectedStatus == "MISSING_OUT" ? "selected" : "")>Thiếu check-out</option>
+                            <option value="NO_DATA" @(Model.SelectedStatus == "NO_DATA" ? "selected" : "")>Không có dữ liệu</option>
+                            <option value="WORK_OFF" @(Model.SelectedStatus == "WORK_OFF" ? "selected" : "")>Chấm công ngày nghỉ</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit"
+                                class="btn btn-primary btn-attendance-search">
+                            <i class="fa-solid fa-search me-1"></i>
+                            Xem báo cáo
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4 attendance-summary">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="attendance-kpi kpi-primary">
+                <div>
+                    <span>Tổng nhân viên</span>
+                    <h3 id="kpiTotalEmployees">@Model.TotalEmployees</h3>
+                </div>
+                <i class="fa-solid fa-users"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="attendance-kpi kpi-warning">
+                <div>
+                    <span>Vào trễ</span>
+                    <h3 id="kpiLateIn">@Model.TotalLateIn</h3>
+                </div>
+                <i class="fa-solid fa-person-walking-arrow-right"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="attendance-kpi kpi-danger">
+                <div>
+                    <span>Thiếu dữ liệu</span>
+                    <h3 id="kpiMissing">@Model.TotalMissing</h3>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="attendance-kpi kpi-success">
+                <div>
+                    <span>Công ngày nghỉ</span>
+                    <h3 id="kpiWorkOff">@Model.TotalWorkOnOffDay</h3>
+                </div>
+                <i class="fa-solid fa-calendar-plus"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="attendance-legend">
+        <span><b class="cell-ok">✓</b> Đủ công</span>
+        <span><b class="cell-late">T</b> Vào trễ</span>
+        <span><b class="cell-early">S</b> Ra sớm</span>
+        <span><b class="cell-missing">I</b> Thiếu check-in</span>
+        <span><b class="cell-missing">O</b> Thiếu check-out</span>
+        <span><b class="cell-off">N</b> Ngày nghỉ</span>
+        <span><b class="cell-holiday">L</b> Ngày lễ</span>
+        <span><b class="cell-workoff">+</b> Chấm công ngày nghỉ</span>
+        <span><b class="cell-empty">-</b> Không có dữ liệu</span>
+    </div>
+
+    <div class="card attendance-table-card">
+        <div class="card-header">
+            <i class="fa-solid fa-table me-2"></i>
+            Chi tiết chấm công
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+
+                <table class="table table-bordered attendance-table text-center align-middle">
+
+                    <thead>
+                        <tr>
+                            <th class="employee-column">Nhân viên</th>
+
+                            @for (int d = 1; d <= 31; d++)
+                            {
+                                <th>@d</th>
+                            }
+
+                            <th>Công</th>
+                            <th>Giờ</th>
+                            <th>Lỗi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="attendanceTableBody">
+                        @{
+                            string currentDept = "";
+                        }
+
+                        @foreach (var row in Model.Rows)
+                        {
+                            if (currentDept != row.TenPhongBan)
+                            {
+                                currentDept = row.TenPhongBan;
+
+                                <tr class="dept-row">
+                                    <td class="dept-name-cell">
+                                        <i class="fa-solid fa-folder-open me-2"></i>
+                                        @currentDept
+                                    </td>
+
+                                    <td class="dept-fill-cell" colspan="34"></td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td class="employee-cell">
+                                    <strong>@row.EmployeeCD</strong>
+                                    <span>@row.TenNhanVien</span>
+                                </td>
+
+                                @for (int i = 0; i < 31; i++)
+                                {
+                                    var cell = row.Days[i];
+
+                                    string cls = cell == null ? "" : "attendance-cell status-" + cell.StatusCode;
+
+                                    <td>
+                                        <span class="@cls"
+                                              title="@(cell == null ? "" : cell.Note)">
+                                            @(cell == null ? "" : cell.Symbol)
+                                        </span>
+                                    </td>
+                                }
+
+                                <td class="fw-bold">@row.WorkingDays</td>
+                                <td class="fw-bold">@row.TotalHours.ToString("0.##")</td>
+                                <td class="fw-bold">@row.IssueCount</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    window.attendanceReportUrls = {
+        data: '@Url.Action("AttendanceData", "Reports")'
+    };
+</script>
+<script src="~/JS/attendance-report.js"></script>

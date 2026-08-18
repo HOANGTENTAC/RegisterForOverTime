@@ -1,0 +1,392 @@
+﻿@{
+    ViewBag.Title = "Trang chủ HRMS";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = Session["LoginInfo"] as HRMS.Models.UsersModel;
+}
+<link href="~/CSS/home.css" rel="stylesheet" />
+<link href="~/CSS/ai-assistant.css" rel="stylesheet" />
+<script src="~/JS/ai-assistant.js"></script>
+@model HRMS.ViewModels.HomePageViewModel
+<div class="layout">
+    <!-- MAIN -->
+    <main class="main">
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="hero-section mb-4">
+                    <div class="hero-content">
+                        <h2>
+                            Xin chào, @user.TenNhanVien
+                        </h2>
+                        <p>
+                            Chúc bạn có một ngày làm việc hiệu quả.
+                        </p>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <i class="fas fa-id-card"></i>
+                                <div>
+                                    <small>Mã nhân viên</small>
+                                    <strong>
+                                        @(user?.MaNhanVien)
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="hero-stat">
+                                <i class="fas fa-building"></i>
+                                <div>
+                                    <small>Phòng ban</small>
+                                    <strong>
+                                        @(user?.TenPhongBan)
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="hero-stat">
+                                <i class="fas fa-calendar-check"></i>
+                                <div>
+                                    <small>Ngày công</small>
+                                    <strong>
+                                        @Model.WorkingDays
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="hero-stat">
+                                <i class="fas fa-bolt"></i>
+                                <div>
+                                    <small>Giờ tăng ca</small>
+                                    <strong>
+                                        @Model.TotalHours
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN -->
+                <div class="row g-4">
+                    <!-- REQUEST -->
+                    <div class="col-xl-8">
+                        <div class="dashboard-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h4>
+                                        <i class="fas fa-file-alt me-2"></i>
+                                        Phiếu đăng ký gần đây
+                                    </h4>
+                                    <span>
+                                        Danh sách yêu cầu nghỉ phép và tăng ca
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <!-- FILTER -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-lg-6">
+                                        <label class="form-label">
+                                            Tìm kiếm
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <input id="txtSearch"
+                                                   class="form-control"
+                                                   placeholder="Tìm mã phiếu hoặc lý do..." />
+                                            <button class="btn btn-outline-secondary btn-refresh">
+                                                <i class="fas fa-rotate-right"></i>
+                                            </button>
+                                            <button class="btn btn-primary btn-search">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Từ ngày</label>
+                                        <input type="date" id="fromDate" class="form-control"
+                                               value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">
+                                            Đến ngày
+                                        </label>
+                                        <input type="date" id="toDate" class="form-control"
+                                               value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                </div>
+
+                                <!-- TABLE -->
+                                <div class="table-responsive">
+                                    <table id="tblRequest" class="table modern-table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Mã phiếu</th>
+                                                <th>Loại phiếu</th>
+                                                <th>Ngày</th>
+                                                <th>Lý do</th>
+                                                <th>Trạng thái</th>
+                                                <th class="text-center">Chi tiết</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.RecentRequests)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@item.TicketNo</strong>
+                                                    </td>
+                                                    <td>
+                                                        @if (item.TicketTypeId == (int)HRMS.Common.Enums.RequestTypeEnum.OT)
+                                                        {
+                                                            <span class="type-badge ot">@item.TypeName</span>
+                                                        }
+                                                        else if((item.TicketTypeId == (int)HRMS.Common.Enums.RequestTypeEnum.SR))
+                                                        {
+                                                            <span class="type-badge shift-register">@item.TypeName</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @item.RequestDate.ToString("dd/MM/yyyy")
+                                                    </td>
+                                                    <td>
+                                                        @(
+                                                            string.IsNullOrEmpty(item.ReasonRequest) ? "" : item.ReasonRequest.Length > 30
+                                                                ? item.ReasonRequest.Substring(0, 30) + "..."
+                                                                : item.ReasonRequest
+                                                        )
+                                                    </td>
+                                                    <td>
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.Pending)
+                                                        {
+                                                            <span class="status-badge status-pending">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.ManagerAccepted)
+                                                        {
+                                                            <span class="status-badge status-manager-accepted">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.ManagerRejected)
+                                                        {
+                                                            <span class="status-badge status-manager-rejected">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.Finished)
+                                                        {
+                                                            <span class="status-badge status-finished">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.HrRejected)
+                                                        {
+                                                            <span class="status-badge status-hr-rejected">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                        @if (item.StatusId == (int)HRMS.Common.Enums.RequestStatusEnum.Cancelled)
+                                                        {
+                                                            <span class="status-badge status-cancelled">
+                                                                @item.StatusName
+                                                            </span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @{
+                                                            string detailUrl = "";
+
+                                                            if (item.TicketTypeId == (int)HRMS.Common.Enums.RequestTypeEnum.OT)
+                                                            {
+                                                                detailUrl = Url.Action("Detail", "OverTime", new { tblTicketId = item.Id });
+                                                            }
+                                                            else if (item.TicketTypeId == (int)HRMS.Common.Enums.RequestTypeEnum.SR)
+                                                            {
+                                                                detailUrl = Url.Action("Detail", "ShiftRegister", new { tblTicketId = item.Id });
+                                                            }
+                                                        }
+
+                                                        <button class="btn btn-sm btn-outline-primary rounded-circle"
+                                                                style="width:38px;height:38px;"
+                                                                onclick="location.href='@detailUrl'">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div id="requestPagination"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CALENDAR -->
+                    <div class="col-xl-4">
+                        <div class="dashboard-panel calendar-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h4>
+                                        <i class="fas fa-calendar-days me-2"></i>Lịch làm việc
+                                    </h4>
+                                    <span id="calendarTitle"> Tháng @Model.CurrentMonth / @Model.CurrentYear</span>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="calendar-filter mb-3">
+                                    <select id="calendarMonth" class="form-select">
+                                        @for (int m = 1; m <= 12; m++)
+                                        {
+                                            <option value="@m"
+                                                    @(m == Model.CurrentMonth ? "selected" : "")>
+                                                Tháng @m
+                                            </option>
+                                        }
+                                    </select>
+                                    <select id="calendarYear" class="form-select">
+                                        @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year; y++)
+                                        {
+                                            <option value="@y" @(y == Model.CurrentYear ? "selected" : "")>
+                                                @y
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="calendar-legend">
+                                    <span>
+                                        <i class="legend work"></i> Làm việc
+                                    </span>
+                                    <span>
+                                        <i class="legend off"></i> Nghỉ
+                                    </span>
+                                    <span>
+                                        <i class="legend holiday"></i> Ngày lễ
+                                    </span>
+                                    <span>
+                                        <i class="legend today"></i> Hôm nay
+                                    </span>
+                                </div>
+                                <div id="calendarGrid" class="calendar-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<!-- ================= AI ASSISTANT ================= -->
+<div id="aiAssistant">
+    <!-- Floating Button -->
+    <button id="aiToggle" class="ai-toggle">
+        <div class="ai-ring"></div>
+        <i class="fas fa-robot "></i>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="aiPanel" class="ai-panel">
+        <!-- Header -->
+        <div class="ai-header">
+            <div class="ai-header-left">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h4>HR Assistant</h4>
+                    <span>Luôn sẵn sàng hỗ trợ</span>
+                </div>
+            </div>
+            <button id="btnCloseAI">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+
+        <div id="chatBody" class="ai-body">
+            <div class="ai-welcome">
+                <div class="welcome-icon">
+                    🤖
+                </div>
+                <h3>Xin chào!</h3>
+                <p>
+                    Tôi là trợ lý AI của HRMS.
+                </p>
+                <p>
+                    Tôi có thể hỗ trợ bạn nhanh chóng.
+                </p>
+            </div>
+            <div class="quick-title">
+                Gợi ý
+            </div>
+            <div class="quick-list">
+                <button class="quick-btn">
+                    📄 Nghỉ phép
+                </button>
+                <button class="quick-btn">
+                    ⏰ Đăng ký tăng ca
+                </button>
+                <button class="quick-btn">
+                    💰 Tra cứu lương
+                </button>
+                <button class="quick-btn">
+                    📅 Chấm công
+                </button>
+                <button class="quick-btn">
+                    👤 Hồ sơ nhân viên
+                </button>
+            </div>
+        </div>
+
+        <!-- Typing -->
+        <div id="typing" class="typing">
+            <div class="typing-avatar">
+                🤖
+            </div>
+            <div class="typing-dot">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="ai-footer">
+            <textarea id="txtMessage"
+                      rows="1"
+                      placeholder="Nhập câu hỏi..."></textarea>
+            <button id="btnSend">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="spinner-modern"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        paginateTable("tblRequest", 5, "requestPagination");
+    });
+
+    function showLoading() {
+        document
+            .getElementById("loadingOverlay")
+            .classList.remove("hidden");
+    }
+
+    function hideLoading() {
+        document
+            .getElementById("loadingOverlay")
+            .classList.add("hidden");
+    }
+</script>
+<script src="~/JS/request-search.js"></script>
+<script src="~/JS/calendar.js"></script>

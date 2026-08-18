@@ -1,0 +1,219 @@
+﻿@model HRMS.ViewModels.EmployeeProfileViewModel
+
+@{
+    ViewBag.Title = "Hồ sơ nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/CSS/employees.css" rel="stylesheet" />
+
+<div class="employee-profile-page">
+
+    <div class="profile-header-card">
+        @{
+            string avatarText = string.IsNullOrEmpty(Model.TenNhanVien) ? "NV" : Model.TenNhanVien.Substring(0, 1).ToUpper();
+            string photoUrl = Url.Action("GetPhoto", "Employees", new { employeeCd = Model.EmployeeCD });
+        }
+
+        <div class="profile-avatar">
+
+            @if (Model.HasPhoto)
+            {
+                <img src="@photoUrl"
+                     alt="@Model.TenNhanVien"
+                     class="profile-avatar-img"
+                     onerror="this.style.display='none'; document.getElementById('fallback-avatar').style.display='flex';" />
+
+                <span id="fallback-avatar"
+                      class="profile-avatar-fallback"
+                      style="display:none;">
+                    @avatarText
+                </span>
+            }
+            else
+            {
+                <span class="profile-avatar-fallback">
+                    @avatarText
+                </span>
+            }
+
+        </div>
+
+        <div class="profile-main">
+            <h2>@Model.TenNhanVien</h2>
+            <p>@Model.EmployeeCD - Mã chấm công: @Model.MaChamCong</p>
+
+            <div class="profile-tags">
+                <span>
+                    <i class="fa-solid fa-building me-1"></i>
+                    @Model.TenPhongBan
+                </span>
+
+                <span>
+                    <i class="fa-solid fa-id-badge me-1"></i>
+                    @(string.IsNullOrEmpty(Model.ChucVu) ? "Chưa cập nhật chức vụ" : Model.ChucVu)
+                </span>
+
+                <span>
+                    <i class="fa-solid fa-circle-check me-1"></i>
+                    @Model.TrangThai
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="javascript:history.back()" class="btn btn-light">
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                Quay lại
+            </a>
+        </div>
+
+    </div>
+
+    <div class="card profile-card">
+        <div class="card-header">
+            <i class="fa-solid fa-user me-2"></i>
+            Thông tin nhân viên
+        </div>
+
+        <div class="card-body">
+            <div class="row g-4">
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Mã nhân viên</label>
+                        <strong>@Model.EmployeeCD</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Tên nhân viên</label>
+                        <strong>@Model.TenNhanVien</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Mã chấm công</label>
+                        <strong>@Model.MaChamCong</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Tên chấm công</label>
+                        <strong>@Model.TenChamCong</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Mã thẻ</label>
+                        <strong>@Model.MaThe</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Phòng ban</label>
+                        <strong>@Model.TenPhongBan</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Ngày vào làm</label>
+                        <strong>@(Model.NgayVaoLamViec?.ToString("dd/MM/yyyy"))</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Ngày sinh</label>
+                        <strong>@(Model.NgaySinh?.ToString("dd/MM/yyyy"))</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Nơi sinh</label>
+                        <strong>@Model.NoiSinh</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Điện thoại</label>
+                        <strong>@Model.DienThoaiLienHe</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Email</label>
+                        <strong>@Model.Email</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>CMND / CCCD</label>
+                        <strong>@Model.CMND</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Ngày cấp</label>
+                        <strong>@(Model.NgayCap?.ToString("dd/MM/yyyy"))</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Nơi cấp</label>
+                        <strong>@Model.NoiCap</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Ngày ký hợp đồng</label>
+                        <strong>@(Model.NgayKyHopDong?.ToString("dd/MM/yyyy"))</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Thời hạn hợp đồng</label>
+                        <strong>@Model.ThoiHanHopDong</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Bảo hiểm</label>
+                        <strong>@(Model.DangThamGiaBaoHiem ? "Đang tham gia" : "Không tham gia")</strong>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="profile-info-item">
+                        <label>Trạng thái</label>
+                        <strong>@Model.TrangThai</strong>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="profile-info-item">
+                        <label>Ghi chú</label>
+                        <strong>@Model.GhiChu</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

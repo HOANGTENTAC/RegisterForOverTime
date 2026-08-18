@@ -1,0 +1,380 @@
+﻿/* =========================================================
+   OVER TIME PAGE
+========================================================= */
+
+:root {
+    --primary: #0d6efd;
+    --border: #e5e7eb;
+    --text: #0f172a;
+    --muted: #64748b;
+}
+
+body {
+    background: #f8fafc;
+}
+
+.emp-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.emp-code {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.emp-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.employee-card,
+.ot-form-card {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+    .employee-card .card-header,
+    .ot-form-card .card-header {
+        border-bottom: 1px solid #eef2f7;
+    }
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .section-title i {
+        color: var(--primary);
+        font-size: 18px;
+    }
+
+    .section-title h5 {
+        font-weight: 700;
+        margin: 0;
+    }
+
+/* =========================================================
+   EMPLOYEE LIST
+========================================================= */
+
+.department-list {
+    max-height: 700px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+    .department-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .department-list::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+
+    .department-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
+    }
+
+/* =========================================================
+   DEPARTMENT
+========================================================= */
+
+.dept-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.dept-header {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: #fafafa;
+    list-style: none;
+}
+
+    .dept-header:hover {
+        background: #f3f4f6;
+    }
+
+/*.dept-header::-webkit-details-marker {
+        display: none;
+    }*/
+
+.dept-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+    .dept-left i {
+        color: var(--primary);
+    }
+
+.dept-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.dept-content {
+    padding: 12px;
+}
+
+/* =========================================================
+   EMPLOYEE ROW
+========================================================= */
+
+.select-all-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.employee-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+    .employee-row:hover {
+        background: #f8fafc;
+    }
+
+.employee-checkbox,
+.check-all-department {
+    accent-color: var(--primary);
+}
+
+.emp-code {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.emp-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* =========================================================
+   SHIFT OPTIONS
+========================================================= */
+
+.shift-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 38px;
+    opacity: .5;
+    transition: .2s ease;
+}
+
+    .shift-options.active {
+        opacity: 1;
+    }
+
+    .shift-options:not(.active) {
+        filter: grayscale(1);
+    }
+
+        .shift-options:not(.active) input[type="radio"] {
+            cursor: not-allowed;
+        }
+
+.form-check {
+    margin-bottom: 0;
+}
+
+/* =========================================================
+   SELECTED EMPLOYEE
+========================================================= */
+
+.selected-box {
+    margin-top: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+}
+
+    .selected-box h4 {
+        margin: 0;
+        padding: 16px 18px;
+        font-size: 15px;
+        font-weight: 700;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .selected-box h4::before {
+            content: "";
+            width: 4px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 999px;
+        }
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.selected-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .selected-table thead th {
+        padding: 14px 16px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .selected-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .selected-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .selected-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+/* =========================================================
+   EMPTY ROW
+========================================================= */
+
+.selected-empty {
+    padding: 32px !important;
+    text-align: center;
+    color: #94a3b8;
+}
+
+    .selected-empty i {
+        margin-right: 6px;
+    }
+
+/* =========================================================
+   LUY KE
+========================================================= */
+
+.luuyke-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.luuyke-normal {
+    background: rgba(59,130,246,.08);
+    color: #2563eb;
+    border: 1px solid rgba(59,130,246,.15);
+}
+
+.luuyke-warning {
+    background: rgba(245,158,11,.10);
+    color: #d97706;
+    border: 1px solid rgba(245,158,11,.25);
+}
+
+.luuyke-danger {
+    background: rgba(239,68,68,.10);
+    color: #dc2626;
+    border: 1px solid rgba(239,68,68,.25);
+}
+
+/* =========================================================
+   REMOVE BUTTON
+========================================================= */
+
+.remove-emp {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #dc2626;
+    transition: .2s ease;
+}
+
+    .remove-emp:hover {
+        background: #fecaca;
+        transform: scale(1.05);
+    }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .department-list {
+        max-height: 400px;
+    }
+
+    .selected-table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .dept-header,
+    .employee-row,
+    .select-all-row {
+        padding: 12px;
+    }
+
+    .section-title h5 {
+        font-size: 15px;
+    }
+}

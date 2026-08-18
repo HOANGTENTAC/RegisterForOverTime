@@ -1,0 +1,103 @@
+﻿body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #2c3e50, #bdc3c7); /* xám bạc gradient */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    color: #f0f0f0;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+    .login-box h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+.form-group {
+    margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+}
+
+    .form-group i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #3498db;
+    }
+
+input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    outline: none;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transition: border-color 0.3s, background 0.3s;
+    box-sizing: border-box;
+}
+
+    input::placeholder {
+        color: #ccc;
+    }
+
+    input:focus {
+        border-color: #3498db;
+        background: rgba(255,255,255,0.25);
+    }
+
+button {
+    width: 100%; /* nút căn giữa, full chiều ngang */
+    padding: 12px;
+    background: #3498db;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    button:hover {
+        background: #2980b9;
+    }
+
+.extra-links {
+    text-align: center;
+    margin-top: 15px;
+}
+
+    .extra-links a {
+        color: #3498db;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+        .extra-links a:hover {
+            text-decoration: underline;
+        }
+
+@media (max-width: 480px) {
+    .login-box {
+        width: 90%;
+        padding: 20px;
+    }
+}

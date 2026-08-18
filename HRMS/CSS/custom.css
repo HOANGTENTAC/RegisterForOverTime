@@ -1,0 +1,675 @@
+﻿/* ==========================================
+   LAYOUT
+========================================== */
+
+.layout-wrapper {
+    display: flex;
+    min-height: calc(100vh - 64px);
+    margin-top: 64px;
+}
+
+    .layout-wrapper main {
+        flex: 1;
+        min-width: 0;
+        background: #f4f6f9;
+    }
+
+/* ==========================================
+   NAVBAR
+========================================== */
+
+.custom-navbar {
+    background: #0b1c2c;
+    height: 64px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .25);
+    z-index: 1050 !important;
+}
+
+    .custom-navbar .container-fluid {
+        height: 100%;
+    }
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.custom-sidebar {
+    width: 250px;
+    min-width: 250px;
+    background: #0b1c2c;
+    flex-shrink: 0;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    z-index: 1040 !important;
+}
+
+    /* Sidebar Scroll */
+
+    .custom-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, .15);
+        border-radius: 999px;
+    }
+
+        .custom-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, .25);
+        }
+
+    /* ==========================================
+   SIDEBAR MENU
+========================================== */
+
+    .custom-sidebar .nav-link {
+        color: #cbd5e1 !important;
+        padding: 12px 14px;
+        margin-bottom: 6px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        transition: all .2s ease;
+    }
+
+        .custom-sidebar .nav-link:hover {
+            background: #142f49;
+            color: #fff !important;
+        }
+
+        .custom-sidebar .nav-link.active {
+            background: #2563eb;
+            color: #fff !important;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, .25);
+        }
+
+    .custom-sidebar .collapse .nav-link {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .custom-sidebar .nav-link i.fa-chevron-down {
+        transition: transform .2s ease;
+    }
+
+/* ==========================================
+   NOTIFICATION
+========================================== */
+.topbar-notification {
+    position: relative;
+}
+
+
+/* ==========================================
+   NOTIFICATION BUTTON
+========================================== */
+
+.notification-btn {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .08);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+    .notification-btn:hover {
+        background: rgba(255, 255, 255, .15);
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    .notification-btn:focus {
+        background: rgba(255, 255, 255, .15);
+        color: #ffffff;
+        outline: none;
+        box-shadow: none;
+    }
+
+    .notification-btn:active {
+        transform: translateY(0);
+    }
+
+    .notification-btn i {
+        font-size: 17px;
+    }
+
+
+/* ==========================================
+   NOTIFICATION BADGE
+========================================== */
+
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #0b1c2c;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+
+/* ==========================================
+   NOTIFICATION DROPDOWN
+========================================== */
+
+.notification-menu {
+    width: 360px;
+    margin-top: 10px !important;
+    padding: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, .18);
+    animation: notificationMenuShow .18s ease-out;
+}
+
+@keyframes notificationMenuShow {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================
+   NOTIFICATION HEADER
+========================================== */
+
+.notification-menu-header {
+    min-height: 54px;
+    padding: 0 17px;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 1px solid #eef2f7;
+}
+
+    .notification-menu-header strong {
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+
+/* ==========================================
+   NOTIFICATION BODY
+========================================== */
+
+.notification-menu-body {
+    padding: 7px;
+    background: #ffffff;
+}
+
+
+/* ==========================================
+   NOTIFICATION ITEM
+========================================== */
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    padding: 13px 12px;
+    border-radius: 11px;
+    color: #1e293b;
+    text-decoration: none;
+    background: #ffffff;
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+    .notification-item:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+
+/* ==========================================
+   NOTIFICATION ICON
+========================================== */
+
+.notification-item-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    border-radius: 12px;
+    background: #fff7ed;
+    color: #f59e0b;
+    font-size: 16px;
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.notification-item:hover .notification-item-icon {
+    background: #ffedd5;
+    transform: scale(1.03);
+}
+
+
+/* ==========================================
+   NOTIFICATION CONTENT
+========================================== */
+
+.notification-item-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 1px;
+}
+
+
+/* ==========================================
+   NOTIFICATION TITLE
+========================================== */
+
+.notification-item-title {
+    margin: 0 0 4px;
+    color: #0f172a;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+
+/* ==========================================
+   NOTIFICATION DESCRIPTION
+========================================== */
+
+.notification-item-description {
+    margin: 0;
+    color: #64748b;
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+    .notification-item-description strong {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+
+/* ==========================================
+   NOTIFICATION ACTION
+========================================== */
+
+.notification-item-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    color: #2563eb;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+    .notification-item-action i {
+        font-size: 9px;
+        transition: transform .2s ease;
+    }
+
+.notification-item:hover .notification-item-action i {
+    transform: translateX(3px);
+}
+
+
+/* ==========================================
+   EMPTY NOTIFICATION
+========================================== */
+
+.notification-empty {
+    padding: 28px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #64748b;
+}
+
+.notification-empty-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+.notification-empty-title {
+    margin-bottom: 3px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.notification-empty-text {
+    color: #94a3b8;
+    font-size: 11.5px;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 576px) {
+
+    .notification-menu {
+        position: fixed !important;
+        top: 64px !important;
+        right: 10px !important;
+        left: 10px !important;
+        width: auto;
+        max-width: none;
+        margin: 0 !important;
+        border-radius: 14px;
+    }
+
+    .notification-item {
+        padding: 13px 12px;
+    }
+
+    .notification-item-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        margin-right: 10px;
+    }
+}
+
+/* ==========================================
+   PROFILE DROPDOWN BUTTON
+========================================== */
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 8px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    transition: all .25s ease;
+}
+
+    .profile-btn:hover,
+    .profile-btn:focus {
+        background: rgba(255, 255, 255, .15);
+        color: #fff;
+        transform: translateY(-1px);
+        outline: none;
+    }
+
+    .profile-btn span {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff !important;
+    }
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .25);
+}
+
+/* ==========================================
+   DROPDOWN MENU
+========================================== */
+
+.dropdown-menu {
+    min-width: 240px;
+    border: none;
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .15);
+}
+
+.dropdown-item {
+    border-radius: 10px;
+    padding: 9px 11px;
+    font-size: 14px;
+}
+
+    .dropdown-item:hover {
+        background: #f1f5f9;
+    }
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+}
+
+.profile-header-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-header strong {
+    display: block;
+    color: #111827;
+}
+
+.profile-header small {
+    color: #6b7280;
+}
+
+/* ==================================================
+   TOASTR MODERN
+================================================== */
+
+#toast-container {
+    top: 80px !important;
+}
+
+    #toast-container > div {
+        width: 360px;
+        opacity: 1 !important;
+        border: none !important;
+        border-radius: 18px !important;
+        background: #fff !important;
+        color: #0f172a !important;
+        padding: 16px 18px 16px 64px !important;
+        box-shadow: 0 10px 15px rgba(15, 23, 42, .08), 0 4px 6px rgba(15, 23, 42, .05) !important;
+        position: relative;
+        font-family: inherit;
+    }
+
+    /* ==================================================
+   TOASTR ICON
+================================================== */
+
+    #toast-container > .toast-success::before,
+    #toast-container > .toast-error::before,
+    #toast-container > .toast-warning::before,
+    #toast-container > .toast-info::before {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 28px;
+    }
+
+    #toast-container > .toast-success::before {
+        content: "✅";
+        color: #22c55e;
+    }
+
+    #toast-container > .toast-error::before {
+        content: "❌";
+        color: #ef4444;
+    }
+
+    #toast-container > .toast-warning::before {
+        content: "⚠️";
+        color: #f59e0b;
+    }
+
+    #toast-container > .toast-info::before {
+        content: "ℹ️";
+        color: #3b82f6;
+    }
+
+/* ==================================================
+   TOASTR TEXT
+================================================== */
+
+.toast-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.toast-message {
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* ==================================================
+   TOASTR CLOSE BUTTON
+================================================== */
+
+.toast-close-button {
+    right: 8px !important;
+    top: 8px !important;
+    color: #94a3b8 !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+    .toast-close-button:hover {
+        color: #334155 !important;
+    }
+
+/* ==================================================
+   TOASTR PROGRESS BAR
+================================================== */
+
+.toast-progress {
+    height: 4px !important;
+    opacity: 1 !important;
+    border-radius: 999px;
+}
+
+.toast-success .toast-progress {
+    background: #22c55e !important;
+}
+
+.toast-error .toast-progress {
+    background: #ef4444 !important;
+}
+
+.toast-warning .toast-progress {
+    background: #f59e0b !important;
+}
+
+.toast-info .toast-progress {
+    background: #3b82f6 !important;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 991.98px) {
+    .custom-sidebar {
+        position: fixed;
+        left: -250px;
+        top: 64px;
+        z-index: 1050 !important;
+        transition: left .3s ease;
+    }
+
+        .custom-sidebar.show {
+            left: 0;
+        }
+
+    .layout-wrapper {
+        display: block;
+    }
+
+        .layout-wrapper main {
+            width: 100%;
+        }
+}
+
+@media (max-width: 576px) {
+    .custom-navbar {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    .topbar-actions {
+        gap: 8px;
+    }
+
+    .notification-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .notification-menu {
+        width: 300px;
+    }
+
+    .profile-btn {
+        padding: 5px 9px 5px 6px;
+    }
+
+        .profile-btn span {
+            display: none;
+        }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    #toast-container > div {
+        width: calc(100vw - 24px) !important;
+    }
+}

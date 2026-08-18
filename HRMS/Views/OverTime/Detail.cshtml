@@ -1,0 +1,368 @@
+﻿@{
+    ViewBag.Title = "Chi tiết tăng ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = Session["LoginInfo"] as HRMS.Models.UsersModel;
+}
+
+@{
+    bool isPending = Model.Ticket.StatusId == 1;
+    bool isCreator = user != null && user.MaNhanVien == Model.Ticket.CreatedUserCD;
+    bool isConfirmUser = user != null && user.MaNhanVien == Model.Header.ConfirmUserCD;
+    bool canManageAll = ViewBag.CanManageAllOvertime != null && (bool)ViewBag.CanManageAllOvertime;
+
+    bool canRemoveDetail = canManageAll || (isPending && (isCreator || isConfirmUser));
+    bool canDeleteTicket = canManageAll || (isPending && isCreator);
+    bool canEditTicket = isPending && isCreator;
+    bool canApproveReject = canManageAll || (isPending && isConfirmUser);
+}
+
+<link href="~/CSS/over-time-details.css" rel="stylesheet" />
+
+<div class="container-fluid ot-detail-page">
+
+    <!-- Breadcrumb -->
+    <div class="ot-breadcrumb">
+        <a href="@Url.Action("Index","OverTime")">Tăng ca</a>
+        /
+        <span>Chi tiết</span>
+    </div>
+
+    <!-- HEADER -->
+    <div class="card shadow-sm page-header-card">
+        <div class="card-body page-header-content">
+
+            <div class="page-title">
+
+                <button class="btn btn-light"
+                        onclick="location.href='@Url.Action("Index","Home")'">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+
+                <div>
+                    <h2>Chi tiết đăng ký tăng ca</h2>
+
+                    <div class="ticket-meta">
+                        Mã phiếu :
+                        <span class="ticket-code">
+                            @Model.Ticket.TicketNo
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div>
+
+                @if (Model.Ticket.StatusId == 1)
+                {
+                    <div class="status-badge status-pending">
+                        <i class="fa fa-clock"></i>
+                        @Model.Ticket.StatusName
+                    </div>
+                }
+                else if (Model.Ticket.StatusId == 2)
+                {
+                    <div class="status-badge status-approved">
+                        <i class="fa fa-check-circle"></i>
+                        @Model.Ticket.StatusName
+                    </div>
+                }
+                else
+                {
+                    <div class="status-badge status-rejected">
+                        <i class="fa fa-times-circle"></i>
+                        @Model.Ticket.StatusName
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm ot-card">
+
+                <div class="card-header">
+                    <h5 class="card-title">
+                        Thông tin đăng ký
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="info-row">
+                        <div class="info-label">Ngày tăng ca</div>
+                        <div class="info-value">
+                            @Model.Header.RequestDate.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Thời gian</div>
+                        <div class="info-value">
+                            @Model.Header.FromTime.ToString("HH:mm")
+                            -
+                            @Model.Header.ToTime.ToString("HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Loại giờ làm thêm</div>
+                        <div class="info-value">
+                            @Model.Header.OvertimeTypeName
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Người xác nhận</div>
+                        <div class="info-value primary">
+                            @Model.Header.ConfirmUserCD - @Model.Header.ConfirmUserName
+                        </div>
+                    </div>
+
+                    <div class="info-row full">
+                        <div class="info-label">Lý do tăng ca</div>
+                        <div class="info-value note">
+                            @Model.Header.Reason
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            @if (Model.Ticket.StatusId == 3 && !string.IsNullOrWhiteSpace(Model.Ticket.Reason))
+            {
+                <div class="card shadow-sm reject-card">
+
+                    <div class="card-header">
+                        <h5 class="card-title text-danger">
+                            Lý do từ chối
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="reject-text">
+                            @Model.Ticket.Reason
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm ot-card">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <h5 class="card-title">
+                        Nhân viên áp dụng
+                    </h5>
+
+                    <span class="count-badge">
+                        @(Model.Details?.Count ?? 0) người
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="employee-list">
+
+                        @foreach (var detail in Model.Details)
+                        {
+                            var cls = "luuyke-tag luuyke-normal";
+
+                            if (detail.MonthlyHours > 40)
+                            {
+                                cls = "luuyke-tag luuyke-danger";
+                            }
+                            else if (detail.MonthlyHours > 30)
+                            {
+                                cls = "luuyke-tag luuyke-warning";
+                            }
+
+                            <div class="employee-item">
+
+                                <div class="employee-avatar">
+                                    @detail.EmployeeName.Substring(0, 1)
+                                </div>
+
+                                <div class="employee-content">
+
+                                    <div class="employee-name">
+                                        @detail.EmployeeName
+                                    </div>
+
+                                    <div class="employee-sub">
+                                        @detail.OvertimeDate.ToString("dd/MM/yyyy")
+                                        •
+                                        @detail.HoursWorked giờ
+                                    </div>
+
+                                </div>
+
+                                <div class="@cls">
+                                    Luỹ kế:
+                                    @detail.MonthlyHours giờ
+                                </div>
+
+                                @if (canRemoveDetail)
+                                {
+                                    <button type="button"
+                                            class="btn-remove"
+                                            data-emp="@detail.EmployeeCD"
+                                            data-header="@Model.Header.Id"
+                                            data-ticket="@Model.Ticket.Id"
+                                            title="Xoá nhân viên">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACTION -->
+
+    <div class="action-bar">
+
+        <div class="action-group">
+
+            <button class="btn btn-outline-primary"
+                    onclick="location.href='@Url.Action("Export", "OverTime", new { tblTicketId = Model.Ticket.Id })'">
+                <i class="fa fa-download"></i>
+                Export
+            </button>
+
+            @if (canEditTicket)
+            {
+                <button class="btn btn-warning"
+                        onclick="location.href='@Url.Action("Edit", "OverTime", new { tblTicketId = Model.Ticket.Id })'">
+                    <i class="fa fa-pen"></i>
+                    Chỉnh sửa
+                </button>
+            }
+
+        </div>
+
+        <div class="action-group">
+
+            <button class="btn btn-light"
+                    onclick="location.href='@Url.Action("Index", "Home")'">
+                Quay lại
+            </button>
+
+            @if (canDeleteTicket)
+            {
+                <button class="btn btn-danger"
+                        onclick="location.href='@Url.Action("Delete", "OverTime", new { tblTicketId = Model.Ticket.Id })'">
+                    Huỷ phiếu
+                </button>
+            }
+
+            @if (canApproveReject)
+            {
+                <button class="btn btn-outline-danger"
+                        id="btnReject"
+                        data-ticket="@Model.Ticket.Id">
+                    Từ chối
+                </button>
+
+                <button class="btn btn-primary"
+                        onclick="location.href='@Url.Action("Accept", "OverTime", new { tblTicketId = Model.Ticket.Id })'">
+                    Chấp nhận
+                </button>
+            }
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).on('click', '.btn-remove', function () {
+        const ticketId = $(this).data('ticket');
+        const empCd = $(this).data('emp');
+        const headerId = $(this).data('header');
+
+        Swal.fire({
+            title: 'Xác nhận xoá',
+            text: 'Bạn có chắc muốn xoá nhân viên này khỏi phiếu?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/OverTime/RemoveDetail', { ticketID: ticketId, employeeCD: empCd, headerId: headerId })
+                    .done(function (res) {
+                        if (res.success) {
+                            toastr.success(res.message);
+
+                            // Xoá khỏi giao diện
+                            $(`.btn-remove[data-ticket='${ticketId}'][data-emp='${empCd}'][data-header='${headerId}']`)
+                                .closest('.employee-item').remove();
+
+                            // Cập nhật lại số lượng nhân viên
+                            const count = $('.employee-item').length;
+                            $('.count-badge').text(count + ' người');
+                        } else {
+                            toastr.error(res.message);
+                        }
+                    })
+                    .fail(function () {
+                        toastr.error('Có lỗi xảy ra khi xoá.');
+                    });
+            }
+        });
+    });
+</script>
+<script>
+       $(document).on('click', '#btnReject', function (e) {
+        e.preventDefault();
+
+        const ticketId = $(this).data('ticket');
+
+        Swal.fire({
+            title: 'Nhập lý do từ chối',
+            input: 'textarea',
+            inputPlaceholder: 'Nhập lý do...',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Huỷ',
+            inputValidator: (value) => {
+                if (!value || value.trim() === '') {
+                    return 'Vui lòng nhập lý do!';
+                }
+            }
+        }).then((result) => {
+
+            if (!result.isConfirmed) return;
+
+            window.location.href =
+                '@Url.Action("Reject", "OverTime")'
+                + '?tblTicketId=' + ticketId
+                + '&reason=' + encodeURIComponent(result.value);
+        });
+    });
+</script>
